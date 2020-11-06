@@ -1,4 +1,4 @@
-function subSchema(schema, schemaID) {
+export function subSchema(schema, schemaID) {
   if (schema.$id === schemaID) {
     return schema;
   }

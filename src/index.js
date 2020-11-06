@@ -20,9 +20,11 @@ export default class HelmUI extends Component {
       c.schema = subSchema(schema, c.schemaID)
     })
 
+    console.log(config)
+
     return (
       <div className="bg-green-100">
-        hello2
+        hello3
       </div>
     );
 

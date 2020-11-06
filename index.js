@@ -60,9 +60,10 @@ var HelmUI = /*#__PURE__*/function (_Component) {
       config.forEach(function (c) {
         c.schema = subSchema(schema, c.schemaID);
       });
+      console.log(config);
       return /*#__PURE__*/_react["default"].createElement("div", {
         className: "bg-green-100"
-      }, "hello2");
+      }, "hello3");
     }
   }]);
 
@@ -71,6 +72,11 @@ var HelmUI = /*#__PURE__*/function (_Component) {
 
 exports["default"] = HelmUI;
 "use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.subSchema = subSchema;
 
 function subSchema(schema, schemaID) {
   if (schema.$id === schemaID) {

@@ -1,6 +1,6 @@
 import {describe, it} from "@jest/globals";
 import * as schema from '../fixtures/values.schema.json';
-import subSchema from '../src/utilities';
+import { subSchema } from '../src/utilities'
 
 describe('subSchema', () => {
   it('should pick the right sub schema', () => {
