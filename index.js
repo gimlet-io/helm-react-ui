@@ -1,4 +1,5 @@
 "use strict";
+"use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
@@ -6,6 +7,10 @@ Object.defineProperty(exports, "__esModule", {
 exports["default"] = void 0;
 
 var _react = _interopRequireWildcard(require("react"));
+
+var _core = _interopRequireDefault(require("@rjsf/core"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 
 function _getRequireWildcardCache() { if (typeof WeakMap !== "function") return null; var cache = new WeakMap(); _getRequireWildcardCache = function _getRequireWildcardCache() { return cache; }; return cache; }
 
@@ -32,6 +37,81 @@ function _assertThisInitialized(self) { if (self === void 0) { throw new Referen
 function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(Reflect.construct(Date, [], function () {})); return true; } catch (e) { return false; } }
 
 function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+
+var CustomText = function CustomText(props) {
+  return /*#__PURE__*/_react["default"].createElement("div", null, /*#__PURE__*/_react["default"].createElement("div", {
+    className: "mt-1 relative rounded-md shadow-sm"
+  }, /*#__PURE__*/_react["default"].createElement("input", {
+    type: "text",
+    className: "form-input block w-full sm:text-sm sm:leading-5",
+    value: props.value,
+    required: props.required,
+    onChange: function onChange(event) {
+      return props.onChange(event.target.value);
+    }
+  })));
+};
+
+var CustomCheckbox = function CustomCheckbox(props) {
+  var value = props.value;
+  var translate = value ? 'translate-x-5' : 'translate-x-0';
+  var bg = value ? 'bg-indigo-600' : 'bg-gray-200';
+  return /*#__PURE__*/_react["default"].createElement("span", {
+    role: "checkbox",
+    tabindex: "0",
+    "aria-checked": value,
+    onClick: function onClick(event) {
+      return props.onChange(!value);
+    },
+    className: '${bg} mt-1 relative inline-flex flex-shrink-0 h-6 w-11 border-2 border-transparent rounded-full cursor-pointer transition-colors ease-in-out duration-200 focus:outline-none focus:shadow-outline'
+  }, /*#__PURE__*/_react["default"].createElement("span", {
+    "aria-hidden": "true",
+    className: "".concat(translate, " inline-block h-5 w-5 rounded-full bg-white shadow transform transition ease-in-out duration-200")
+  }));
+};
+
+var CustomDescription = function CustomDescription(props) {
+  var description = props.description;
+  return /*#__PURE__*/_react["default"].createElement("p", {
+    className: "text-sm text-gray-500"
+  }, description);
+};
+
+var CustomTitle = function CustomTitle(props) {
+  var title = props.title;
+  return /*#__PURE__*/_react["default"].createElement("label", {
+    className: "block text-sm font-medium leading-5 text-gray-700"
+  }, title);
+};
+
+var CustomFieldTemplate = function CustomFieldTemplate(props) {
+  var id = props.id,
+      classNames = props.classNames,
+      label = props.label,
+      help = props.help,
+      required = props.required,
+      description = props.description,
+      errors = props.errors,
+      children = props.children;
+  return /*#__PURE__*/_react["default"].createElement("div", {
+    className: classNames
+  }, /*#__PURE__*/_react["default"].createElement("label", {
+    htmlFor: id
+  }, label, required ? "*" : null), children, description, errors, help);
+};
+
+var customFields = {
+  DescriptionField: CustomDescription,
+  TitleField: CustomTitle
+};
+var customWidgets = {
+  TextWidget: CustomText,
+  CheckboxWidget: CustomCheckbox
+};
+
+var log = function log(type) {
+  return console.log.bind(console, type);
+};
 
 var HelmUI = /*#__PURE__*/function (_Component) {
   _inherits(HelmUI, _Component);
@@ -75,7 +155,13 @@ var HelmUI = /*#__PURE__*/function (_Component) {
       config.forEach(function (c) {
         c.schema = subSchema(schema, c.schemaID);
       });
-      console.log(config);
+      var selectedConfig = {};
+      config.forEach(function (c) {
+        if (c.schemaID === _this2.state.selectedID) {
+          selectedConfig = c;
+        }
+      });
+      console.log(selectedConfig);
       return /*#__PURE__*/_react["default"].createElement("div", {
         className: "lg:grid lg:grid-cols-12 lg:gap-x-5"
       }, /*#__PURE__*/_react["default"].createElement("aside", {
@@ -109,7 +195,17 @@ var HelmUI = /*#__PURE__*/function (_Component) {
         }, c.metaData.name));
       }))), /*#__PURE__*/_react["default"].createElement("div", {
         className: "space-y-6 sm:px-6 lg:px-0 lg:col-span-9"
-      }, /*#__PURE__*/_react["default"].createElement("form", {
+      }, /*#__PURE__*/_react["default"].createElement(_core["default"], {
+        schema: selectedConfig.schema,
+        onChange: log("changed"),
+        onSubmit: log("submitted"),
+        onError: log("errors"),
+        uiSchema: selectedConfig.uiSchema // fields={customFields}
+        // widgets={customWidgets}
+        // FieldTemplate={CustomFieldTemplate}
+        // className={styles('m-8')}
+
+      }), /*#__PURE__*/_react["default"].createElement("form", {
         action: "#",
         method: "POST"
       }, /*#__PURE__*/_react["default"].createElement("div", {
