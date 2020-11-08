@@ -39,14 +39,29 @@ var HelmUI = /*#__PURE__*/function (_Component) {
   var _super = _createSuper(HelmUI);
 
   function HelmUI(props) {
+    var _this;
+
     _classCallCheck(this, HelmUI);
 
-    return _super.call(this, props);
+    _this = _super.call(this, props);
+    _this.state = {
+      selectedID: _this.props.config[0].schemaID
+    };
+    return _this;
   }
 
   _createClass(HelmUI, [{
+    key: "select",
+    value: function select(schemaID) {
+      this.setState({
+        selectedID: schemaID
+      });
+    }
+  }, {
     key: "render",
     value: function render() {
+      var _this2 = this;
+
       var _this$props = this.props,
           schema = _this$props.schema,
           config = _this$props.config;
@@ -67,42 +82,32 @@ var HelmUI = /*#__PURE__*/function (_Component) {
         className: "py-6 px-2 sm:px-6 lg:py-0 lg:px-0 lg:col-span-3"
       }, /*#__PURE__*/_react["default"].createElement("nav", {
         className: "space-y-1"
-      }, /*#__PURE__*/_react["default"].createElement("a", {
-        href: "#",
-        className: "group bg-gray-50 rounded-md px-3 py-2 flex items-center text-sm leading-5 font-medium text-indigo-700 hover:text-indigo-700 hover:bg-white focus:outline-none focus:bg-indigo-100 transition ease-in-out duration-150",
-        "aria-current": "page"
-      }, /*#__PURE__*/_react["default"].createElement("svg", {
-        className: "flex-shrink-0 -ml-1 mr-3 h-6 w-6 text-indigo-500 group-hover:text-indigo-500 group-focus:text-indigo-600 transition ease-in-out duration-150",
-        "aria-hidden": "true",
-        xmlns: "http://www.w3.org/2000/svg",
-        fill: "none",
-        viewBox: "0 0 24 24",
-        stroke: "currentColor"
-      }, /*#__PURE__*/_react["default"].createElement("path", {
-        strokeLinecap: "round",
-        strokeLinejoin: "round",
-        strokeWidth: "2",
-        d: "M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0zm6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-      })), /*#__PURE__*/_react["default"].createElement("span", {
-        className: "truncate"
-      }, "Account")), /*#__PURE__*/_react["default"].createElement("a", {
-        href: "#",
-        className: "group rounded-md px-3 py-2 flex items-center text-sm leading-5 font-medium text-gray-900 hover:text-gray-900 hover:bg-gray-50 focus:outline-none focus:text-gray-900 focus:bg-gray-50 transition ease-in-out duration-150"
-      }, /*#__PURE__*/_react["default"].createElement("svg", {
-        className: "flex-shrink-0 -ml-1 mr-3 h-6 w-6 text-gray-400 group-hover:text-gray-500 group-focus:text-gray-500 transition ease-in-out duration-150",
-        "aria-hidden": "true",
-        xmlns: "http://www.w3.org/2000/svg",
-        fill: "none",
-        viewBox: "0 0 24 24",
-        stroke: "currentColor"
-      }, /*#__PURE__*/_react["default"].createElement("path", {
-        strokeLinecap: "round",
-        strokeLinejoin: "round",
-        strokeWidth: "2",
-        d: "M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"
-      })), /*#__PURE__*/_react["default"].createElement("span", {
-        className: "truncate"
-      }, "Password")))), /*#__PURE__*/_react["default"].createElement("div", {
+      }, config.map(function (c) {
+        var selected = _this2.state.selectedID === c.schemaID;
+        console.log();
+        return /*#__PURE__*/_react["default"].createElement("a", {
+          href: "#",
+          className: 'group rounded-md px-3 py-2 flex items-center text-sm leading-5 font-medium focus:outline-none transition ease-in-out duration-150 ' + (selected ? 'bg-gray-50 text-indigo-700 hover:bg-white' : 'text-gray-900 hover:bg-gray-50'),
+          "aria-current": "page",
+          onClick: function onClick() {
+            return _this2.select(c.schemaID);
+          }
+        }, /*#__PURE__*/_react["default"].createElement("svg", {
+          className: 'flex-shrink-0 -ml-1 mr-3 h-6 w-6 transition ease-in-out duration-150 ' + (selected ? 'text-indigo-500 group-focus:text-indigo-600' : 'text-gray-400 group-focus:text-gray-500'),
+          "aria-hidden": "true",
+          xmlns: "http://www.w3.org/2000/svg",
+          fill: "none",
+          viewBox: "0 0 24 24",
+          stroke: "currentColor"
+        }, /*#__PURE__*/_react["default"].createElement("path", {
+          strokeLinecap: "round",
+          strokeLinejoin: "round",
+          strokeWidth: "2",
+          d: c.metaData.icon
+        })), /*#__PURE__*/_react["default"].createElement("span", {
+          className: "truncate"
+        }, c.metaData.name));
+      }))), /*#__PURE__*/_react["default"].createElement("div", {
         className: "space-y-6 sm:px-6 lg:px-0 lg:col-span-9"
       }, /*#__PURE__*/_react["default"].createElement("form", {
         action: "#",

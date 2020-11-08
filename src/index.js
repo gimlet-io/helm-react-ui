@@ -3,6 +3,16 @@ import React, { Component } from 'react'
 export default class HelmUI extends Component {
   constructor (props) {
     super(props)
+
+    this.state = {
+      selectedID: this.props.config[0].schemaID
+    };
+  }
+
+  select (schemaID) {
+    this.setState({
+      selectedID: schemaID
+    })
   }
 
   render () {
@@ -26,34 +36,37 @@ export default class HelmUI extends Component {
       <div className="lg:grid lg:grid-cols-12 lg:gap-x-5">
         <aside className="py-6 px-2 sm:px-6 lg:py-0 lg:px-0 lg:col-span-3">
           <nav className="space-y-1">
-            <a href="#"
-               className="group bg-gray-50 rounded-md px-3 py-2 flex items-center text-sm leading-5 font-medium text-indigo-700 hover:text-indigo-700 hover:bg-white focus:outline-none focus:bg-indigo-100 transition ease-in-out duration-150"
-               aria-current="page">
-              <svg
-                className="flex-shrink-0 -ml-1 mr-3 h-6 w-6 text-indigo-500 group-hover:text-indigo-500 group-focus:text-indigo-600 transition ease-in-out duration-150"
-                aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"
-                      d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0zm6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-              </svg>
-              <span className="truncate">
-                Account
-              </span>
-            </a>
-
-            <a href="#"
-               className="group rounded-md px-3 py-2 flex items-center text-sm leading-5 font-medium text-gray-900 hover:text-gray-900 hover:bg-gray-50 focus:outline-none focus:text-gray-900 focus:bg-gray-50 transition ease-in-out duration-150">
-              <svg
-                className="flex-shrink-0 -ml-1 mr-3 h-6 w-6 text-gray-400 group-hover:text-gray-500 group-focus:text-gray-500 transition ease-in-out duration-150"
-                aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"
-                      d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"/>
-              </svg>
-              <span className="truncate">
-                Password
-              </span>
-            </a>
+            {
+              config.map(c => {
+                const selected = this.state.selectedID === c.schemaID;
+                console.log()
+                return (
+                  <a href="#"
+                     className={'group rounded-md px-3 py-2 flex items-center text-sm leading-5 font-medium focus:outline-none transition ease-in-out duration-150 ' + (selected ? 'bg-gray-50 text-indigo-700 hover:bg-white' : 'text-gray-900 hover:bg-gray-50')}
+                     aria-current="page"
+                     onClick={() => this.select(c.schemaID)}
+                  >
+                    <svg
+                      className={'flex-shrink-0 -ml-1 mr-3 h-6 w-6 transition ease-in-out duration-150 ' + (selected ? 'text-indigo-500 group-focus:text-indigo-600' : 'text-gray-400 group-focus:text-gray-500')}
+                      aria-hidden="true"
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none" viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                        d={c.metaData.icon}
+                      />
+                    </svg>
+                    <span className="truncate">
+                      {c.metaData.name}
+                    </span>
+                  </a>
+                )
+              })
+            }
           </nav>
         </aside>
 
