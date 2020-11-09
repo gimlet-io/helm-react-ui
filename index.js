@@ -216,14 +216,7 @@ var HelmUI = /*#__PURE__*/function (_Component) {
         formData: values
       }, "onChange", function onChange(e) {
         return setValues(e.formData);
-      }))), /*#__PURE__*/_react["default"].createElement("div", {
-        className: "px-4 py-3 bg-gray-50 text-right sm:px-6"
-      }, /*#__PURE__*/_react["default"].createElement("span", {
-        className: "inline-flex rounded-md shadow-sm"
-      }, /*#__PURE__*/_react["default"].createElement("button", {
-        type: "submit",
-        className: "bg-indigo-600 border border-transparent rounded-md py-2 px-4 inline-flex justify-center text-sm leading-5 font-medium text-white hover:bg-indigo-500 focus:outline-none focus:border-indigo-700 focus:shadow-outline-indigo active:bg-indigo-700 transition duration-150 ease-in-out"
-      }, "Save"))))));
+      }))))));
     }
   }]);
 

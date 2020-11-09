@@ -175,14 +175,6 @@ export default class HelmUI extends Component {
                 // className={styles('m-8')}
               />
             </div>
-            <div className="px-4 py-3 bg-gray-50 text-right sm:px-6">
-              <span className="inline-flex rounded-md shadow-sm">
-                <button type="submit"
-                        className="bg-indigo-600 border border-transparent rounded-md py-2 px-4 inline-flex justify-center text-sm leading-5 font-medium text-white hover:bg-indigo-500 focus:outline-none focus:border-indigo-700 focus:shadow-outline-indigo active:bg-indigo-700 transition duration-150 ease-in-out">
-                  Save
-                </button>
-              </span>
-            </div>
           </div>
         </div>
       </div>
