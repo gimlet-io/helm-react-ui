@@ -92,7 +92,10 @@ export default class HelmUI extends Component {
   }
 
   render () {
-    const { schema, config } = this.props
+    const { schema, config, values, setValues } = this.props
+
+    console.log(values)
+    console.log(setValues)
 
     if (!schema || !config) {
       return (
@@ -113,15 +116,10 @@ export default class HelmUI extends Component {
       }
     })
 
-    console.log(selectedConfig);
-
     selectedConfig.uiSchema = extendUISchema(selectedConfig.schema, selectedConfig.uiSchema);
     turnDescriptionToHintForLeaves(selectedConfig.schema, selectedConfig.uiSchema); // this should be, but doesn't work [selectedConfig.schema, selectedConfig.uiSchema] =
     selectedConfig.schema = trimRootTitle(selectedConfig.schema);
     selectedConfig.uiSchema = makeArraysNonOrderable(selectedConfig.schema, selectedConfig.uiSchema);
-
-    console.log(selectedConfig);
-
 
     return (
       <div className="lg:grid lg:grid-cols-12 lg:gap-x-5">
@@ -130,7 +128,6 @@ export default class HelmUI extends Component {
             {
               config.map(c => {
                 const selected = this.state.selectedID === c.schemaID;
-                console.log()
                 return (
                   <a href="#"
                      className={'group rounded-md px-3 py-2 flex items-center text-sm leading-5 font-medium focus:outline-none transition ease-in-out duration-150 ' + (selected ? 'bg-gray-50 text-indigo-700 hover:bg-white' : 'text-gray-900 hover:bg-gray-50')}
@@ -170,6 +167,8 @@ export default class HelmUI extends Component {
                 onSubmit={log("submitted")}
                 onError={log("errors")}
                 uiSchema={selectedConfig.uiSchema}
+                formData={values}
+                onChange={e => setValues(e.formData)}
                 // fields={customFields}
                 // widgets={customWidgets}
                 // FieldTemplate={CustomFieldTemplate}

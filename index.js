@@ -17,6 +17,8 @@ function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj;
 
 function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
@@ -143,7 +145,11 @@ var HelmUI = /*#__PURE__*/function (_Component) {
 
       var _this$props = this.props,
           schema = _this$props.schema,
-          config = _this$props.config;
+          config = _this$props.config,
+          values = _this$props.values,
+          setValues = _this$props.setValues;
+      console.log(values);
+      console.log(setValues);
 
       if (!schema || !config) {
         return /*#__PURE__*/_react["default"].createElement("div", {
@@ -160,13 +166,11 @@ var HelmUI = /*#__PURE__*/function (_Component) {
           selectedConfig = c;
         }
       });
-      console.log(selectedConfig);
       selectedConfig.uiSchema = extendUISchema(selectedConfig.schema, selectedConfig.uiSchema);
       turnDescriptionToHintForLeaves(selectedConfig.schema, selectedConfig.uiSchema); // this should be, but doesn't work [selectedConfig.schema, selectedConfig.uiSchema] =
 
       selectedConfig.schema = trimRootTitle(selectedConfig.schema);
       selectedConfig.uiSchema = makeArraysNonOrderable(selectedConfig.schema, selectedConfig.uiSchema);
-      console.log(selectedConfig);
       return /*#__PURE__*/_react["default"].createElement("div", {
         className: "lg:grid lg:grid-cols-12 lg:gap-x-5"
       }, /*#__PURE__*/_react["default"].createElement("aside", {
@@ -175,7 +179,6 @@ var HelmUI = /*#__PURE__*/function (_Component) {
         className: "space-y-1"
       }, config.map(function (c) {
         var selected = _this2.state.selectedID === c.schemaID;
-        console.log();
         return /*#__PURE__*/_react["default"].createElement("a", {
           href: "#",
           className: 'group rounded-md px-3 py-2 flex items-center text-sm leading-5 font-medium focus:outline-none transition ease-in-out duration-150 ' + (selected ? 'bg-gray-50 text-indigo-700 hover:bg-white' : 'text-gray-900 hover:bg-gray-50'),
@@ -204,17 +207,16 @@ var HelmUI = /*#__PURE__*/function (_Component) {
         className: "shadow sm:rounded-md sm:overflow-hidden"
       }, /*#__PURE__*/_react["default"].createElement("div", {
         className: "bg-white py-6 px-4 space-y-6 sm:p-6"
-      }, /*#__PURE__*/_react["default"].createElement(_core["default"], {
+      }, /*#__PURE__*/_react["default"].createElement(_core["default"], _defineProperty({
         schema: selectedConfig.schema,
         onChange: log("changed"),
         onSubmit: log("submitted"),
         onError: log("errors"),
-        uiSchema: selectedConfig.uiSchema // fields={customFields}
-        // widgets={customWidgets}
-        // FieldTemplate={CustomFieldTemplate}
-        // className={styles('m-8')}
-
-      })), /*#__PURE__*/_react["default"].createElement("div", {
+        uiSchema: selectedConfig.uiSchema,
+        formData: values
+      }, "onChange", function onChange(e) {
+        return setValues(e.formData);
+      }))), /*#__PURE__*/_react["default"].createElement("div", {
         className: "px-4 py-3 bg-gray-50 text-right sm:px-6"
       }, /*#__PURE__*/_react["default"].createElement("span", {
         className: "inline-flex rounded-md shadow-sm"
