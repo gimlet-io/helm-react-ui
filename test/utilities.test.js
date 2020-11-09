@@ -1,6 +1,6 @@
 import {describe, it} from "@jest/globals";
 import * as schema from '../fixtures/values.schema.json';
-import { extendUISchema, subSchema, turnDescriptionToHintForLeaves } from '../src/utilities'
+import { extendUISchema, makeArraysNonOrderable, subSchema, turnDescriptionToHintForLeaves } from '../src/utilities'
 
 describe('subSchema', () => {
   it('should pick the right sub schema', () => {
@@ -265,7 +265,6 @@ describe('extendUISchema', () => {
   });
 });
 
-
 describe('turnDescriptionToHintForLeaves', () => {
   it('should turn description into ui:hint', () => {
     const [alteredSchema, extendedUISchema] = turnDescriptionToHintForLeaves({
@@ -317,6 +316,35 @@ describe('turnDescriptionToHintForLeaves', () => {
     expect(extendedUISchema).toStrictEqual({
       field: {
         prop: {}
+      },
+      field2: {}
+    });
+  });
+});
+
+describe('makeArraysNonOrderable', () => {
+  it('should make array non orderable', () => {
+    const uiSchema = makeArraysNonOrderable({
+      type: 'array',
+      properties: {
+        field: {
+          type: 'array'
+        },
+        field2: {}
+      }
+    }, {
+      field: {},
+      field2: {}
+    })
+
+    expect(uiSchema).toStrictEqual({
+      "ui:options": {
+        orderable: false
+      },
+      field: {
+        "ui:options": {
+          orderable: false
+        },
       },
       field2: {}
     });

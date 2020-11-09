@@ -59,3 +59,19 @@ export function trimRootTitle(schema) {
 
   return schema
 }
+
+export function makeArraysNonOrderable (schema, uiSchema) {
+  if (schema.type === 'array') {
+    uiSchema['ui:options'] = {
+      orderable: false
+    };
+  }
+
+  if (schema.properties !== undefined) {
+    for (const property of Object.keys(schema.properties)) {
+      uiSchema[property] = makeArraysNonOrderable(schema.properties[property], uiSchema[property])
+    }
+  }
+
+  return uiSchema
+}

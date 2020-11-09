@@ -165,6 +165,7 @@ var HelmUI = /*#__PURE__*/function (_Component) {
       turnDescriptionToHintForLeaves(selectedConfig.schema, selectedConfig.uiSchema); // this should be, but doesn't work [selectedConfig.schema, selectedConfig.uiSchema] =
 
       selectedConfig.schema = trimRootTitle(selectedConfig.schema);
+      selectedConfig.uiSchema = makeArraysNonOrderable(selectedConfig.schema, selectedConfig.uiSchema);
       console.log(selectedConfig);
       return /*#__PURE__*/_react["default"].createElement("div", {
         className: "lg:grid lg:grid-cols-12 lg:gap-x-5"
@@ -238,6 +239,7 @@ exports.isLeaf = isLeaf;
 exports.extendUISchema = extendUISchema;
 exports.turnDescriptionToHintForLeaves = turnDescriptionToHintForLeaves;
 exports.trimRootTitle = trimRootTitle;
+exports.makeArraysNonOrderable = makeArraysNonOrderable;
 
 function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest(); }
 
@@ -323,4 +325,21 @@ function trimRootTitle(schema) {
   }
 
   return schema;
+}
+
+function makeArraysNonOrderable(schema, uiSchema) {
+  if (schema.type === 'array') {
+    uiSchema['ui:options'] = {
+      orderable: false
+    };
+  }
+
+  if (schema.properties !== undefined) {
+    for (var _i4 = 0, _Object$keys4 = Object.keys(schema.properties); _i4 < _Object$keys4.length; _i4++) {
+      var property = _Object$keys4[_i4];
+      uiSchema[property] = makeArraysNonOrderable(schema.properties[property], uiSchema[property]);
+    }
+  }
+
+  return uiSchema;
 }

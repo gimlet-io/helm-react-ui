@@ -118,6 +118,7 @@ export default class HelmUI extends Component {
     selectedConfig.uiSchema = extendUISchema(selectedConfig.schema, selectedConfig.uiSchema);
     turnDescriptionToHintForLeaves(selectedConfig.schema, selectedConfig.uiSchema); // this should be, but doesn't work [selectedConfig.schema, selectedConfig.uiSchema] =
     selectedConfig.schema = trimRootTitle(selectedConfig.schema);
+    selectedConfig.uiSchema = makeArraysNonOrderable(selectedConfig.schema, selectedConfig.uiSchema);
 
     console.log(selectedConfig);
 
