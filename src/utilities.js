@@ -50,3 +50,12 @@ export function turnDescriptionToHintForLeaves (schema, uiSchema) {
 
   return [schema, uiSchema];
 }
+
+export function trimRootTitle(schema) {
+  if (schema.properties !== undefined) {
+    delete schema.title;
+    delete schema.description;
+  }
+
+  return schema
+}

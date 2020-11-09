@@ -162,7 +162,9 @@ var HelmUI = /*#__PURE__*/function (_Component) {
       });
       console.log(selectedConfig);
       selectedConfig.uiSchema = extendUISchema(selectedConfig.schema, selectedConfig.uiSchema);
-      turnDescriptionToHintForLeaves(selectedConfig.schema, selectedConfig.uiSchema);
+      turnDescriptionToHintForLeaves(selectedConfig.schema, selectedConfig.uiSchema); // this should be, but doesn't work [selectedConfig.schema, selectedConfig.uiSchema] =
+
+      selectedConfig.schema = trimRootTitle(selectedConfig.schema);
       console.log(selectedConfig);
       return /*#__PURE__*/_react["default"].createElement("div", {
         className: "lg:grid lg:grid-cols-12 lg:gap-x-5"
@@ -235,6 +237,7 @@ exports.subSchema = subSchema;
 exports.isLeaf = isLeaf;
 exports.extendUISchema = extendUISchema;
 exports.turnDescriptionToHintForLeaves = turnDescriptionToHintForLeaves;
+exports.trimRootTitle = trimRootTitle;
 
 function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest(); }
 
@@ -311,4 +314,13 @@ function turnDescriptionToHintForLeaves(schema, uiSchema) {
   }
 
   return [schema, uiSchema];
+}
+
+function trimRootTitle(schema) {
+  if (schema.properties !== undefined) {
+    delete schema.title;
+    delete schema.description;
+  }
+
+  return schema;
 }
