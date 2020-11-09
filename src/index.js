@@ -115,6 +115,12 @@ export default class HelmUI extends Component {
 
     console.log(selectedConfig);
 
+    selectedConfig.uiSchema = extendUISchema(selectedConfig.schema, selectedConfig.uiSchema);
+    turnDescriptionToHintForLeaves(selectedConfig.schema, selectedConfig.uiSchema);
+
+    console.log(selectedConfig);
+
+
     return (
       <div className="lg:grid lg:grid-cols-12 lg:gap-x-5">
         <aside className="py-6 px-2 sm:px-6 lg:py-0 lg:px-0 lg:col-span-3">
@@ -154,97 +160,29 @@ export default class HelmUI extends Component {
         </aside>
 
         <div className="space-y-6 sm:px-6 lg:px-0 lg:col-span-9">
-          <Form
-            schema={selectedConfig.schema}
-            onChange={log("changed")}
-            onSubmit={log("submitted")}
-            onError={log("errors")}
-            uiSchema={selectedConfig.uiSchema}
-            // fields={customFields}
-            // widgets={customWidgets}
-            // FieldTemplate={CustomFieldTemplate}
-            // className={styles('m-8')}
-          />
-          <form action="#" method="POST">
-            <div className="shadow sm:rounded-md sm:overflow-hidden">
-              <div className="bg-white py-6 px-4 space-y-6 sm:p-6">
-                <div>
-                  <h2 className="text-lg leading-6 font-medium text-gray-900">Personal Information</h2>
-                  <p className="mt-1 text-sm leading-5 text-gray-500">Use a permanent address where you can receive
-                    mail.</p>
-                </div>
-
-                <div className="grid grid-cols-6 gap-6">
-                  <div className="col-span-6 sm:col-span-3">
-                    <label htmlFor="first_name" className="block text-sm font-medium leading-5 text-gray-700">First
-                      name</label>
-                    <input id="first_name"
-                           className="form-input mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:shadow-outline-blue focus:border-blue-300 transition duration-150 ease-in-out sm:text-sm sm:leading-5"/>
-                  </div>
-
-                  <div className="col-span-6 sm:col-span-3">
-                    <label htmlFor="last_name" className="block text-sm font-medium leading-5 text-gray-700">Last
-                      name</label>
-                    <input id="last_name"
-                           className="form-input mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:shadow-outline-blue focus:border-blue-300 transition duration-150 ease-in-out sm:text-sm sm:leading-5"/>
-                  </div>
-
-                  <div className="col-span-6 sm:col-span-4">
-                    <label htmlFor="email_address" className="block text-sm font-medium leading-5 text-gray-700">Email
-                      address</label>
-                    <input id="email_address"
-                           className="form-input mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:shadow-outline-blue focus:border-blue-300 transition duration-150 ease-in-out sm:text-sm sm:leading-5"/>
-                  </div>
-
-                  <div className="col-span-6 sm:col-span-3">
-                    <label htmlFor="country" className="block text-sm font-medium leading-5 text-gray-700">Country /
-                      Region</label>
-                    <select id="country"
-                            className="form-select mt-1 block w-full bg-white border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:shadow-outline-blue focus:border-blue-300 transition duration-150 ease-in-out sm:text-sm sm:leading-5">
-                      <option>United States</option>
-                      <option>Canada</option>
-                      <option>Mexico</option>
-                    </select>
-                  </div>
-
-                  <div className="col-span-6">
-                    <label htmlFor="street_address" className="block text-sm font-medium leading-5 text-gray-700">Street
-                      address</label>
-                    <input id="street_address"
-                           className="form-input mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:shadow-outline-blue focus:border-blue-300 transition duration-150 ease-in-out sm:text-sm sm:leading-5"/>
-                  </div>
-
-                  <div className="col-span-6 sm:col-span-6 lg:col-span-2">
-                    <label htmlFor="city" className="block text-sm font-medium leading-5 text-gray-700">City</label>
-                    <input id="city"
-                           className="form-input mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:shadow-outline-blue focus:border-blue-300 transition duration-150 ease-in-out sm:text-sm sm:leading-5"/>
-                  </div>
-
-                  <div className="col-span-6 sm:col-span-3 lg:col-span-2">
-                    <label htmlFor="state" className="block text-sm font-medium leading-5 text-gray-700">State /
-                      Province</label>
-                    <input id="state"
-                           className="form-input mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:shadow-outline-blue focus:border-blue-300 transition duration-150 ease-in-out sm:text-sm sm:leading-5"/>
-                  </div>
-
-                  <div className="col-span-6 sm:col-span-3 lg:col-span-2">
-                    <label htmlFor="postal_code" className="block text-sm font-medium leading-5 text-gray-700">ZIP /
-                      Postal</label>
-                    <input id="postal_code"
-                           className="form-input mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:shadow-outline-blue focus:border-blue-300 transition duration-150 ease-in-out sm:text-sm sm:leading-5"/>
-                  </div>
-                </div>
-              </div>
-              <div className="px-4 py-3 bg-gray-50 text-right sm:px-6">
-                <span className="inline-flex rounded-md shadow-sm">
-                  <button type="submit"
-                          className="bg-indigo-600 border border-transparent rounded-md py-2 px-4 inline-flex justify-center text-sm leading-5 font-medium text-white hover:bg-indigo-500 focus:outline-none focus:border-indigo-700 focus:shadow-outline-indigo active:bg-indigo-700 transition duration-150 ease-in-out">
-                    Save
-                  </button>
-                </span>
-              </div>
+          <div className="shadow sm:rounded-md sm:overflow-hidden">
+            <div className="bg-white py-6 px-4 space-y-6 sm:p-6">
+              <Form
+                schema={selectedConfig.schema}
+                onChange={log("changed")}
+                onSubmit={log("submitted")}
+                onError={log("errors")}
+                uiSchema={selectedConfig.uiSchema}
+                // fields={customFields}
+                // widgets={customWidgets}
+                // FieldTemplate={CustomFieldTemplate}
+                // className={styles('m-8')}
+              />
             </div>
-          </form>
+            <div className="px-4 py-3 bg-gray-50 text-right sm:px-6">
+              <span className="inline-flex rounded-md shadow-sm">
+                <button type="submit"
+                        className="bg-indigo-600 border border-transparent rounded-md py-2 px-4 inline-flex justify-center text-sm leading-5 font-medium text-white hover:bg-indigo-500 focus:outline-none focus:border-indigo-700 focus:shadow-outline-indigo active:bg-indigo-700 transition duration-150 ease-in-out">
+                  Save
+                </button>
+              </span>
+            </div>
+          </div>
         </div>
       </div>
     )

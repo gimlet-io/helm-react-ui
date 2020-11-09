@@ -1,5 +1,4 @@
 "use strict";
-"use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
@@ -162,6 +161,9 @@ var HelmUI = /*#__PURE__*/function (_Component) {
         }
       });
       console.log(selectedConfig);
+      selectedConfig.uiSchema = extendUISchema(selectedConfig.schema, selectedConfig.uiSchema);
+      turnDescriptionToHintForLeaves(selectedConfig.schema, selectedConfig.uiSchema);
+      console.log(selectedConfig);
       return /*#__PURE__*/_react["default"].createElement("div", {
         className: "lg:grid lg:grid-cols-12 lg:gap-x-5"
       }, /*#__PURE__*/_react["default"].createElement("aside", {
@@ -195,6 +197,10 @@ var HelmUI = /*#__PURE__*/function (_Component) {
         }, c.metaData.name));
       }))), /*#__PURE__*/_react["default"].createElement("div", {
         className: "space-y-6 sm:px-6 lg:px-0 lg:col-span-9"
+      }, /*#__PURE__*/_react["default"].createElement("div", {
+        className: "shadow sm:rounded-md sm:overflow-hidden"
+      }, /*#__PURE__*/_react["default"].createElement("div", {
+        className: "bg-white py-6 px-4 space-y-6 sm:p-6"
       }, /*#__PURE__*/_react["default"].createElement(_core["default"], {
         schema: selectedConfig.schema,
         onChange: log("changed"),
@@ -205,91 +211,14 @@ var HelmUI = /*#__PURE__*/function (_Component) {
         // FieldTemplate={CustomFieldTemplate}
         // className={styles('m-8')}
 
-      }), /*#__PURE__*/_react["default"].createElement("form", {
-        action: "#",
-        method: "POST"
-      }, /*#__PURE__*/_react["default"].createElement("div", {
-        className: "shadow sm:rounded-md sm:overflow-hidden"
-      }, /*#__PURE__*/_react["default"].createElement("div", {
-        className: "bg-white py-6 px-4 space-y-6 sm:p-6"
-      }, /*#__PURE__*/_react["default"].createElement("div", null, /*#__PURE__*/_react["default"].createElement("h2", {
-        className: "text-lg leading-6 font-medium text-gray-900"
-      }, "Personal Information"), /*#__PURE__*/_react["default"].createElement("p", {
-        className: "mt-1 text-sm leading-5 text-gray-500"
-      }, "Use a permanent address where you can receive mail.")), /*#__PURE__*/_react["default"].createElement("div", {
-        className: "grid grid-cols-6 gap-6"
-      }, /*#__PURE__*/_react["default"].createElement("div", {
-        className: "col-span-6 sm:col-span-3"
-      }, /*#__PURE__*/_react["default"].createElement("label", {
-        htmlFor: "first_name",
-        className: "block text-sm font-medium leading-5 text-gray-700"
-      }, "First name"), /*#__PURE__*/_react["default"].createElement("input", {
-        id: "first_name",
-        className: "form-input mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:shadow-outline-blue focus:border-blue-300 transition duration-150 ease-in-out sm:text-sm sm:leading-5"
       })), /*#__PURE__*/_react["default"].createElement("div", {
-        className: "col-span-6 sm:col-span-3"
-      }, /*#__PURE__*/_react["default"].createElement("label", {
-        htmlFor: "last_name",
-        className: "block text-sm font-medium leading-5 text-gray-700"
-      }, "Last name"), /*#__PURE__*/_react["default"].createElement("input", {
-        id: "last_name",
-        className: "form-input mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:shadow-outline-blue focus:border-blue-300 transition duration-150 ease-in-out sm:text-sm sm:leading-5"
-      })), /*#__PURE__*/_react["default"].createElement("div", {
-        className: "col-span-6 sm:col-span-4"
-      }, /*#__PURE__*/_react["default"].createElement("label", {
-        htmlFor: "email_address",
-        className: "block text-sm font-medium leading-5 text-gray-700"
-      }, "Email address"), /*#__PURE__*/_react["default"].createElement("input", {
-        id: "email_address",
-        className: "form-input mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:shadow-outline-blue focus:border-blue-300 transition duration-150 ease-in-out sm:text-sm sm:leading-5"
-      })), /*#__PURE__*/_react["default"].createElement("div", {
-        className: "col-span-6 sm:col-span-3"
-      }, /*#__PURE__*/_react["default"].createElement("label", {
-        htmlFor: "country",
-        className: "block text-sm font-medium leading-5 text-gray-700"
-      }, "Country / Region"), /*#__PURE__*/_react["default"].createElement("select", {
-        id: "country",
-        className: "form-select mt-1 block w-full bg-white border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:shadow-outline-blue focus:border-blue-300 transition duration-150 ease-in-out sm:text-sm sm:leading-5"
-      }, /*#__PURE__*/_react["default"].createElement("option", null, "United States"), /*#__PURE__*/_react["default"].createElement("option", null, "Canada"), /*#__PURE__*/_react["default"].createElement("option", null, "Mexico"))), /*#__PURE__*/_react["default"].createElement("div", {
-        className: "col-span-6"
-      }, /*#__PURE__*/_react["default"].createElement("label", {
-        htmlFor: "street_address",
-        className: "block text-sm font-medium leading-5 text-gray-700"
-      }, "Street address"), /*#__PURE__*/_react["default"].createElement("input", {
-        id: "street_address",
-        className: "form-input mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:shadow-outline-blue focus:border-blue-300 transition duration-150 ease-in-out sm:text-sm sm:leading-5"
-      })), /*#__PURE__*/_react["default"].createElement("div", {
-        className: "col-span-6 sm:col-span-6 lg:col-span-2"
-      }, /*#__PURE__*/_react["default"].createElement("label", {
-        htmlFor: "city",
-        className: "block text-sm font-medium leading-5 text-gray-700"
-      }, "City"), /*#__PURE__*/_react["default"].createElement("input", {
-        id: "city",
-        className: "form-input mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:shadow-outline-blue focus:border-blue-300 transition duration-150 ease-in-out sm:text-sm sm:leading-5"
-      })), /*#__PURE__*/_react["default"].createElement("div", {
-        className: "col-span-6 sm:col-span-3 lg:col-span-2"
-      }, /*#__PURE__*/_react["default"].createElement("label", {
-        htmlFor: "state",
-        className: "block text-sm font-medium leading-5 text-gray-700"
-      }, "State / Province"), /*#__PURE__*/_react["default"].createElement("input", {
-        id: "state",
-        className: "form-input mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:shadow-outline-blue focus:border-blue-300 transition duration-150 ease-in-out sm:text-sm sm:leading-5"
-      })), /*#__PURE__*/_react["default"].createElement("div", {
-        className: "col-span-6 sm:col-span-3 lg:col-span-2"
-      }, /*#__PURE__*/_react["default"].createElement("label", {
-        htmlFor: "postal_code",
-        className: "block text-sm font-medium leading-5 text-gray-700"
-      }, "ZIP / Postal"), /*#__PURE__*/_react["default"].createElement("input", {
-        id: "postal_code",
-        className: "form-input mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:shadow-outline-blue focus:border-blue-300 transition duration-150 ease-in-out sm:text-sm sm:leading-5"
-      })))), /*#__PURE__*/_react["default"].createElement("div", {
         className: "px-4 py-3 bg-gray-50 text-right sm:px-6"
       }, /*#__PURE__*/_react["default"].createElement("span", {
         className: "inline-flex rounded-md shadow-sm"
       }, /*#__PURE__*/_react["default"].createElement("button", {
         type: "submit",
         className: "bg-indigo-600 border border-transparent rounded-md py-2 px-4 inline-flex justify-center text-sm leading-5 font-medium text-white hover:bg-indigo-500 focus:outline-none focus:border-indigo-700 focus:shadow-outline-indigo active:bg-indigo-700 transition duration-150 ease-in-out"
-      }, "Save")))))));
+      }, "Save"))))));
     }
   }]);
 
@@ -303,6 +232,21 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.subSchema = subSchema;
+exports.isLeaf = isLeaf;
+exports.extendUISchema = extendUISchema;
+exports.turnDescriptionToHintForLeaves = turnDescriptionToHintForLeaves;
+
+function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest(); }
+
+function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+
+function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
+
+function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
+
+function _iterableToArrayLimit(arr, i) { if (typeof Symbol === "undefined" || !(Symbol.iterator in Object(arr))) return; var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
+
+function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 
 function subSchema(schema, schemaID) {
   if (schema.$id === schemaID) {
@@ -321,4 +265,50 @@ function subSchema(schema, schemaID) {
   }
 
   return undefined;
+}
+
+function isLeaf(schema) {
+  return schema.properties === undefined;
+}
+
+function extendUISchema(schema, uiSchema) {
+  if (schema.properties === undefined) {
+    return uiSchema;
+  }
+
+  for (var _i2 = 0, _Object$keys2 = Object.keys(schema.properties); _i2 < _Object$keys2.length; _i2++) {
+    var property = _Object$keys2[_i2];
+
+    if (uiSchema[property] === undefined) {
+      uiSchema[property] = {};
+    }
+
+    uiSchema[property] = extendUISchema(schema.properties[property], uiSchema[property]);
+  }
+
+  return uiSchema;
+}
+
+function turnDescriptionToHintForLeaves(schema, uiSchema) {
+  if (schema.properties === undefined) {
+    if (schema.description !== undefined) {
+      uiSchema['ui:help'] = schema.description;
+      delete schema.description;
+    }
+
+    return [schema, uiSchema];
+  }
+
+  for (var _i3 = 0, _Object$keys3 = Object.keys(schema.properties); _i3 < _Object$keys3.length; _i3++) {
+    var property = _Object$keys3[_i3];
+
+    var _turnDescriptionToHin = turnDescriptionToHintForLeaves(schema.properties[property], uiSchema[property]);
+
+    var _turnDescriptionToHin2 = _slicedToArray(_turnDescriptionToHin, 2);
+
+    schema.properties[property] = _turnDescriptionToHin2[0];
+    uiSchema[property] = _turnDescriptionToHin2[1];
+  }
+
+  return [schema, uiSchema];
 }

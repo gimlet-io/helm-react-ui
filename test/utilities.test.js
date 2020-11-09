@@ -1,6 +1,6 @@
 import {describe, it} from "@jest/globals";
 import * as schema from '../fixtures/values.schema.json';
-import { subSchema } from '../src/utilities'
+import { extendUISchema, subSchema, turnDescriptionToHintForLeaves } from '../src/utilities'
 
 describe('subSchema', () => {
   it('should pick the right sub schema', () => {
@@ -171,6 +171,154 @@ describe('subSchema', () => {
         }
       },
       "additionalProperties": true
+    });
+  });
+});
+
+
+describe('extendUISchema', () => {
+  it('should have a uiSchema for all schema fields', () => {
+    const extended = extendUISchema({
+      properties: {
+        field: {},
+        field2: {}
+      }
+    }, {})
+
+    expect(extended).toStrictEqual({
+      field: {},
+      field2: {}
+    });
+  });
+
+  it('should have a uiSchema for all schema fields again', () => {
+    const extended = extendUISchema({
+      properties: {
+        field: {
+          properties: {
+            prop: {}
+          }
+        },
+        field2: {}
+      }
+    }, {})
+
+    expect(extended).toStrictEqual({
+      field: {
+        prop: {}
+      },
+      field2: {}
+    });
+  });
+
+  it('should merge with existing uiSchema fields', () => {
+    const extended = extendUISchema({
+      properties: {
+        field: {
+          properties: {
+            prop: {}
+          }
+        },
+        field2: {}
+      }
+    }, {
+      field: {
+        prop: {
+          "uiEntry": "value"
+        }
+      }
+    })
+
+    expect(extended).toStrictEqual({
+      field: {
+        prop: {
+          "uiEntry": "value"
+        }
+      },
+      field2: {}
+    });
+  });
+
+  it('should merge with existing uiSchema fields again', () => {
+    const extended = extendUISchema({
+      properties: {
+        field: {
+          properties: {
+            prop: {}
+          }
+        },
+        field2: {}
+      }
+    }, {
+      field: {
+        "uiEntry": "value"
+      }
+    })
+
+    expect(extended).toStrictEqual({
+      field: {
+        "uiEntry": "value",
+        prop: {}
+      },
+      field2: {}
+    });
+  });
+});
+
+
+describe('turnDescriptionToHintForLeaves', () => {
+  it('should turn description into ui:hint', () => {
+    const [alteredSchema, extendedUISchema] = turnDescriptionToHintForLeaves({
+      properties: {
+        field: {
+          description: 'random description'
+        },
+        field2: {}
+      }
+    }, {
+      field: {
+      },
+      field2: {}
+    })
+
+    expect(alteredSchema).toStrictEqual({
+      properties: {
+        field: {},
+        field2: {}
+      }
+    });
+
+    expect(extendedUISchema).toStrictEqual({
+      field: {
+        "ui:help": 'random description'
+      },
+      field2: {}
+    });
+  });
+
+  it('should turn description into ui:hint only for leaves', () => {
+    const [alteredSchema, extendedUISchema] = turnDescriptionToHintForLeaves({
+      properties: {
+        field: {
+          description: 'random description',
+          properties: {
+            prop: {}
+          }
+        },
+        field2: {}
+      }
+    }, {
+      field: {
+        prop: {}
+      },
+      field2: {}
+    })
+
+    expect(extendedUISchema).toStrictEqual({
+      field: {
+        prop: {}
+      },
+      field2: {}
     });
   });
 });
