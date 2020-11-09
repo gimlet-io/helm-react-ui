@@ -17,8 +17,6 @@ function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj;
 
 function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
@@ -108,11 +106,7 @@ var customFields = {
 var customWidgets = {
   TextWidget: CustomText,
   CheckboxWidget: CustomCheckbox
-};
-
-var log = function log(type) {
-  return console.log.bind(console, type);
-};
+}; // const log = (type) => console.log.bind(console, type);
 
 var HelmUI = /*#__PURE__*/function (_Component) {
   _inherits(HelmUI, _Component);
@@ -139,6 +133,12 @@ var HelmUI = /*#__PURE__*/function (_Component) {
       });
     }
   }, {
+    key: "setSchemaValues",
+    value: function setSchemaValues(schema, schemaID, values, value) {
+      var updatedValues = setSubSchemaValues(schema, schemaID, values, value);
+      this.props.setValues(updatedValues);
+    }
+  }, {
     key: "render",
     value: function render() {
       var _this2 = this;
@@ -146,10 +146,7 @@ var HelmUI = /*#__PURE__*/function (_Component) {
       var _this$props = this.props,
           schema = _this$props.schema,
           config = _this$props.config,
-          values = _this$props.values,
-          setValues = _this$props.setValues;
-      console.log(values);
-      console.log(setValues);
+          values = _this$props.values;
 
       if (!schema || !config) {
         return /*#__PURE__*/_react["default"].createElement("div", {
@@ -157,20 +154,21 @@ var HelmUI = /*#__PURE__*/function (_Component) {
         }, "Please provide a schema and its config");
       }
 
-      config.forEach(function (c) {
-        c.schema = subSchema(schema, c.schemaID);
-      });
-      var selectedConfig = {};
+      var schemaToRender = {};
+      var uiSchemaToRender = {};
+      var valuesToRender = {};
       config.forEach(function (c) {
         if (c.schemaID === _this2.state.selectedID) {
-          selectedConfig = c;
+          schemaToRender = subSchema(schema, _this2.state.selectedID);
+          uiSchemaToRender = c.uiSchema;
+          valuesToRender = subSchemaValues(schema, _this2.state.selectedID, values);
         }
       });
-      selectedConfig.uiSchema = extendUISchema(selectedConfig.schema, selectedConfig.uiSchema);
-      turnDescriptionToHintForLeaves(selectedConfig.schema, selectedConfig.uiSchema); // this should be, but doesn't work [selectedConfig.schema, selectedConfig.uiSchema] =
+      uiSchemaToRender = extendUISchema(schemaToRender, uiSchemaToRender);
+      turnDescriptionToHintForLeaves(schemaToRender, uiSchemaToRender); // this should be, but doesn't work [schemaToRender, uiSchemaToRender] =
 
-      selectedConfig.schema = trimRootTitle(selectedConfig.schema);
-      selectedConfig.uiSchema = makeArraysNonOrderable(selectedConfig.schema, selectedConfig.uiSchema);
+      schemaToRender = trimRootTitle(schemaToRender);
+      uiSchemaToRender = makeArraysNonOrderable(schemaToRender, uiSchemaToRender);
       return /*#__PURE__*/_react["default"].createElement("div", {
         className: "lg:grid lg:grid-cols-12 lg:gap-x-5"
       }, /*#__PURE__*/_react["default"].createElement("aside", {
@@ -207,16 +205,21 @@ var HelmUI = /*#__PURE__*/function (_Component) {
         className: "shadow sm:rounded-md sm:overflow-hidden"
       }, /*#__PURE__*/_react["default"].createElement("div", {
         className: "bg-white py-6 px-4 space-y-6 sm:p-6"
-      }, /*#__PURE__*/_react["default"].createElement(_core["default"], _defineProperty({
-        schema: selectedConfig.schema,
-        onChange: log("changed"),
-        onSubmit: log("submitted"),
-        onError: log("errors"),
-        uiSchema: selectedConfig.uiSchema,
-        formData: values
-      }, "onChange", function onChange(e) {
-        return setValues(e.formData);
-      }))))));
+      }, /*#__PURE__*/_react["default"].createElement(_core["default"], {
+        onChange: function onChange(e) {
+          return _this2.setSchemaValues(schema, _this2.state.selectedID, values, e.formData);
+        },
+        schema: schemaToRender // onChange={log("changed")}
+        // onSubmit={log("submitted")}
+        // onError={log("errors")}
+        ,
+        uiSchema: uiSchemaToRender,
+        formData: valuesToRender // fields={customFields}
+        // widgets={customWidgets}
+        // FieldTemplate={CustomFieldTemplate}
+        // className={styles('m-8')}
+
+      })))));
     }
   }]);
 
@@ -230,6 +233,8 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.subSchema = subSchema;
+exports.subSchemaValues = subSchemaValues;
+exports.setSubSchemaValues = setSubSchemaValues;
 exports.isLeaf = isLeaf;
 exports.extendUISchema = extendUISchema;
 exports.turnDescriptionToHintForLeaves = turnDescriptionToHintForLeaves;
@@ -267,6 +272,51 @@ function subSchema(schema, schemaID) {
   return undefined;
 }
 
+function subSchemaValues(schema, schemaID, values) {
+  if (schema.$id === schemaID) {
+    return values;
+  }
+
+  if (schema.properties !== undefined) {
+    for (var _i2 = 0, _Object$keys2 = Object.keys(schema.properties); _i2 < _Object$keys2.length; _i2++) {
+      var property = _Object$keys2[_i2];
+
+      if (values[property] !== undefined) {
+        var found = subSchemaValues(schema.properties[property], schemaID, values[property]);
+
+        if (found !== undefined) {
+          return found;
+        }
+      }
+    }
+  }
+
+  return undefined;
+}
+
+function setSubSchemaValues(schema, schemaID, values, value) {
+  if (schema.$id === schemaID) {
+    return value;
+  }
+
+  if (values === undefined) {
+    return values;
+  }
+
+  if (schema.properties !== undefined) {
+    for (var _i3 = 0, _Object$keys3 = Object.keys(schema.properties); _i3 < _Object$keys3.length; _i3++) {
+      var property = _Object$keys3[_i3];
+      var v = setSubSchemaValues(schema.properties[property], schemaID, values[property], value);
+
+      if (v !== undefined) {
+        values[property] = v;
+      }
+    }
+  }
+
+  return values;
+}
+
 function isLeaf(schema) {
   return schema.properties === undefined;
 }
@@ -276,8 +326,8 @@ function extendUISchema(schema, uiSchema) {
     return uiSchema;
   }
 
-  for (var _i2 = 0, _Object$keys2 = Object.keys(schema.properties); _i2 < _Object$keys2.length; _i2++) {
-    var property = _Object$keys2[_i2];
+  for (var _i4 = 0, _Object$keys4 = Object.keys(schema.properties); _i4 < _Object$keys4.length; _i4++) {
+    var property = _Object$keys4[_i4];
 
     if (uiSchema[property] === undefined) {
       uiSchema[property] = {};
@@ -299,8 +349,8 @@ function turnDescriptionToHintForLeaves(schema, uiSchema) {
     return [schema, uiSchema];
   }
 
-  for (var _i3 = 0, _Object$keys3 = Object.keys(schema.properties); _i3 < _Object$keys3.length; _i3++) {
-    var property = _Object$keys3[_i3];
+  for (var _i5 = 0, _Object$keys5 = Object.keys(schema.properties); _i5 < _Object$keys5.length; _i5++) {
+    var property = _Object$keys5[_i5];
 
     var _turnDescriptionToHin = turnDescriptionToHintForLeaves(schema.properties[property], uiSchema[property]);
 
@@ -330,8 +380,8 @@ function makeArraysNonOrderable(schema, uiSchema) {
   }
 
   if (schema.properties !== undefined) {
-    for (var _i4 = 0, _Object$keys4 = Object.keys(schema.properties); _i4 < _Object$keys4.length; _i4++) {
-      var property = _Object$keys4[_i4];
+    for (var _i6 = 0, _Object$keys6 = Object.keys(schema.properties); _i6 < _Object$keys6.length; _i6++) {
+      var property = _Object$keys6[_i6];
       uiSchema[property] = makeArraysNonOrderable(schema.properties[property], uiSchema[property]);
     }
   }

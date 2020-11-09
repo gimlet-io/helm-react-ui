@@ -1,18 +1,58 @@
 export function subSchema (schema, schemaID) {
   if (schema.$id === schemaID) {
-    return schema
+    return schema;
   }
 
   if (schema.properties !== undefined) {
     for (const property of Object.keys(schema.properties)) {
       const found = subSchema(schema.properties[property], schemaID)
       if (found !== undefined) {
-        return found
+        return found;
+      }
+    }
+  }
+
+  return undefined;
+}
+
+export function subSchemaValues (schema, schemaID, values) {
+  if (schema.$id === schemaID) {
+    return values;
+  }
+
+  if (schema.properties !== undefined) {
+    for (const property of Object.keys(schema.properties)) {
+      if (values[property] !== undefined) {
+        const found = subSchemaValues(schema.properties[property], schemaID, values[property])
+        if (found !== undefined) {
+          return found;
+        }
       }
     }
   }
 
   return undefined
+}
+
+export function setSubSchemaValues (schema, schemaID, values, value) {
+  if (schema.$id === schemaID) {
+    return value;
+  }
+
+  if (values === undefined) {
+    return values;
+  }
+
+  if (schema.properties !== undefined) {
+    for (const property of Object.keys(schema.properties)) {
+      const v = setSubSchemaValues(schema.properties[property], schemaID, values[property], value)
+      if (v !== undefined) {
+        values[property] = v;
+      }
+    }
+  }
+
+  return values
 }
 
 export function isLeaf (schema) {
@@ -38,23 +78,23 @@ export function extendUISchema (schema, uiSchema) {
 export function turnDescriptionToHintForLeaves (schema, uiSchema) {
   if (schema.properties === undefined) {
     if (schema.description !== undefined) {
-      uiSchema['ui:help'] = schema.description;
-      delete schema.description;
+      uiSchema['ui:help'] = schema.description
+      delete schema.description
     }
-    return [schema, uiSchema];
+    return [schema, uiSchema]
   }
 
   for (const property of Object.keys(schema.properties)) {
     [schema.properties[property], uiSchema[property]] = turnDescriptionToHintForLeaves(schema.properties[property], uiSchema[property])
   }
 
-  return [schema, uiSchema];
+  return [schema, uiSchema]
 }
 
-export function trimRootTitle(schema) {
+export function trimRootTitle (schema) {
   if (schema.properties !== undefined) {
-    delete schema.title;
-    delete schema.description;
+    delete schema.title
+    delete schema.description
   }
 
   return schema
@@ -64,7 +104,7 @@ export function makeArraysNonOrderable (schema, uiSchema) {
   if (schema.type === 'array') {
     uiSchema['ui:options'] = {
       orderable: false
-    };
+    }
   }
 
   if (schema.properties !== undefined) {

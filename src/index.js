@@ -73,8 +73,7 @@ const customWidgets = {
   CheckboxWidget: CustomCheckbox,
 };
 
-const log = (type) => console.log.bind(console, type);
-
+// const log = (type) => console.log.bind(console, type);
 
 export default class HelmUI extends Component {
   constructor (props) {
@@ -91,11 +90,13 @@ export default class HelmUI extends Component {
     })
   }
 
-  render () {
-    const { schema, config, values, setValues } = this.props
+  setSchemaValues (schema, schemaID, values, value) {
+    const updatedValues = setSubSchemaValues(schema, schemaID, values, value)
+    this.props.setValues(updatedValues);
+  }
 
-    console.log(values)
-    console.log(setValues)
+  render () {
+    const { schema, config, values } = this.props
 
     if (!schema || !config) {
       return (
@@ -105,21 +106,22 @@ export default class HelmUI extends Component {
       )
     }
 
-    config.forEach((c) => {
-      c.schema = subSchema(schema, c.schemaID);
-    })
+    let schemaToRender = {};
+    let uiSchemaToRender = {};
+    let valuesToRender = {};
 
-    let selectedConfig = {};
     config.forEach((c) => {
       if (c.schemaID === this.state.selectedID) {
-        selectedConfig = c;
+        schemaToRender = subSchema(schema, this.state.selectedID)
+        uiSchemaToRender = c.uiSchema;
+        valuesToRender = subSchemaValues(schema, this.state.selectedID, values);
       }
     })
 
-    selectedConfig.uiSchema = extendUISchema(selectedConfig.schema, selectedConfig.uiSchema);
-    turnDescriptionToHintForLeaves(selectedConfig.schema, selectedConfig.uiSchema); // this should be, but doesn't work [selectedConfig.schema, selectedConfig.uiSchema] =
-    selectedConfig.schema = trimRootTitle(selectedConfig.schema);
-    selectedConfig.uiSchema = makeArraysNonOrderable(selectedConfig.schema, selectedConfig.uiSchema);
+    uiSchemaToRender = extendUISchema(schemaToRender, uiSchemaToRender);
+    turnDescriptionToHintForLeaves(schemaToRender, uiSchemaToRender); // this should be, but doesn't work [schemaToRender, uiSchemaToRender] =
+    schemaToRender = trimRootTitle(schemaToRender);
+    uiSchemaToRender = makeArraysNonOrderable(schemaToRender, uiSchemaToRender);
 
     return (
       <div className="lg:grid lg:grid-cols-12 lg:gap-x-5">
@@ -162,13 +164,13 @@ export default class HelmUI extends Component {
           <div className="shadow sm:rounded-md sm:overflow-hidden">
             <div className="bg-white py-6 px-4 space-y-6 sm:p-6">
               <Form
-                schema={selectedConfig.schema}
-                onChange={log("changed")}
-                onSubmit={log("submitted")}
-                onError={log("errors")}
-                uiSchema={selectedConfig.uiSchema}
-                formData={values}
-                onChange={e => setValues(e.formData)}
+                onChange={e => this.setSchemaValues(schema, this.state.selectedID, values, e.formData)}
+                schema={schemaToRender}
+                // onChange={log("changed")}
+                // onSubmit={log("submitted")}
+                // onError={log("errors")}
+                uiSchema={uiSchemaToRender}
+                formData={valuesToRender}
                 // fields={customFields}
                 // widgets={customWidgets}
                 // FieldTemplate={CustomFieldTemplate}
