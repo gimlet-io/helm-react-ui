@@ -65,11 +65,16 @@ export function filterDefaultValues (schema, values) {
       if (values[property] !== undefined) {
         values[property] = filterDefaultValues(schema.properties[property], values[property])
         if (values[property] === undefined ||
-          (Object.keys(values[property]).length === 0 && values[property].constructor === Object)) {
+          (Object.keys(values[property]).length === 0 && values[property].constructor === Object) ||
+          JSON.stringify(values[property]) === '[]') {
           delete values[property];
         }
       }
     }
+  }
+
+  if (values === []) {
+    return undefined
   }
 
   return values
@@ -97,14 +102,14 @@ export function turnDescriptionToHintForLeaves (schema, uiSchema) {
       uiSchema['ui:help'] = schema.description
       delete schema.description
     }
-    return [schema, uiSchema]
+    return uiSchema;
   }
 
   for (const property of Object.keys(schema.properties)) {
-    [schema.properties[property], uiSchema[property]] = turnDescriptionToHintForLeaves(schema.properties[property], uiSchema[property])
+    uiSchema[property] = turnDescriptionToHintForLeaves(schema.properties[property], uiSchema[property])
   }
 
-  return [schema, uiSchema]
+  return uiSchema;
 }
 
 export function trimRootTitle (schema) {

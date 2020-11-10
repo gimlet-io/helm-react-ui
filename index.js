@@ -96,7 +96,7 @@ var CustomFieldTemplate = function CustomFieldTemplate(props) {
     className: classNames
   }, /*#__PURE__*/_react["default"].createElement("label", {
     htmlFor: id
-  }, label, required ? "*" : null), children, description, errors, help);
+  }, label, required ? '*' : null), children, description, errors, help);
 };
 
 var customFields = {
@@ -120,16 +120,16 @@ var HelmUI = /*#__PURE__*/function (_Component) {
 
     _this = _super.call(this, props);
     _this.state = {
-      selectedID: _this.props.config[0].schemaID
+      selected: _this.props.config[0].metaData.name
     };
     return _this;
   }
 
   _createClass(HelmUI, [{
     key: "select",
-    value: function select(schemaID) {
+    value: function select(name) {
       this.setState({
-        selectedID: schemaID
+        selected: name
       });
     }
   }, {
@@ -154,21 +154,29 @@ var HelmUI = /*#__PURE__*/function (_Component) {
         }, "Please provide a schema and its config");
       }
 
-      var schemaToRender = {};
+      var schemasToRender = [];
       var uiSchemaToRender = {};
       var valuesToRender = {};
+      var _ = {};
       config.forEach(function (c) {
-        if (c.schemaID === _this2.state.selectedID) {
-          schemaToRender = subSchema(schema, _this2.state.selectedID);
-          uiSchemaToRender = c.uiSchema;
-          valuesToRender = subSchemaValues(schema, _this2.state.selectedID, values);
+        if (c.metaData.name === _this2.state.selected) {
+          c.schemaIDs.forEach(function (schemaID) {
+            schemasToRender.push(JSON.parse(JSON.stringify(subSchema(schema, schemaID))));
+
+            if (c.uiSchema[schemaID] === undefined) {
+              uiSchemaToRender[schemaID] = {};
+            } else {
+              uiSchemaToRender[schemaID] = c.uiSchema[schemaID];
+            }
+          });
         }
       });
-      uiSchemaToRender = extendUISchema(schemaToRender, uiSchemaToRender);
-      turnDescriptionToHintForLeaves(schemaToRender, uiSchemaToRender); // this should be, but doesn't work [schemaToRender, uiSchemaToRender] =
-
-      schemaToRender = trimRootTitle(schemaToRender);
-      uiSchemaToRender = makeArraysNonOrderable(schemaToRender, uiSchemaToRender);
+      schemasToRender.forEach(function (s) {
+        uiSchemaToRender[s.$id] = extendUISchema(s, uiSchemaToRender[s.$id]);
+        uiSchemaToRender[s.$id] = turnDescriptionToHintForLeaves(s, uiSchemaToRender[s.$id]);
+        uiSchemaToRender[s.$id] = makeArraysNonOrderable(s, uiSchemaToRender[s.$id]);
+        valuesToRender[s.$id] = subSchemaValues(schema, s.$id, values);
+      });
       return /*#__PURE__*/_react["default"].createElement("div", {
         className: "lg:grid lg:grid-cols-12 lg:gap-x-5"
       }, /*#__PURE__*/_react["default"].createElement("aside", {
@@ -176,13 +184,13 @@ var HelmUI = /*#__PURE__*/function (_Component) {
       }, /*#__PURE__*/_react["default"].createElement("nav", {
         className: "space-y-1"
       }, config.map(function (c) {
-        var selected = _this2.state.selectedID === c.schemaID;
+        var selected = _this2.state.selected === c.metaData.name;
         return /*#__PURE__*/_react["default"].createElement("a", {
           href: "#",
           className: 'group rounded-md px-3 py-2 flex items-center text-sm leading-5 font-medium focus:outline-none transition ease-in-out duration-150 ' + (selected ? 'bg-gray-50 text-indigo-700 hover:bg-white' : 'text-gray-900 hover:bg-gray-50'),
           "aria-current": "page",
           onClick: function onClick() {
-            return _this2.select(c.schemaID);
+            return _this2.select(c.metaData.name);
           }
         }, /*#__PURE__*/_react["default"].createElement("svg", {
           className: 'flex-shrink-0 -ml-1 mr-3 h-6 w-6 transition ease-in-out duration-150 ' + (selected ? 'text-indigo-500 group-focus:text-indigo-600' : 'text-gray-400 group-focus:text-gray-500'),
@@ -205,20 +213,23 @@ var HelmUI = /*#__PURE__*/function (_Component) {
         className: "shadow sm:rounded-md sm:overflow-hidden"
       }, /*#__PURE__*/_react["default"].createElement("div", {
         className: "bg-white py-6 px-4 space-y-6 sm:p-6"
-      }, /*#__PURE__*/_react["default"].createElement(_core["default"], {
-        onChange: function onChange(e) {
-          return _this2.setSchemaValues(schema, _this2.state.selectedID, values, e.formData);
-        },
-        schema: schemaToRender // onChange={log("changed")}
-        // onSubmit={log("submitted")}
-        // onError={log("errors")}
-        ,
-        uiSchema: uiSchemaToRender,
-        formData: valuesToRender // fields={customFields}
-        // widgets={customWidgets}
-        // FieldTemplate={CustomFieldTemplate}
-        // className={styles('m-8')}
+      }, schemasToRender.map(function (s) {
+        return /*#__PURE__*/_react["default"].createElement(_core["default"], {
+          key: s.$id,
+          onChange: function onChange(e) {
+            return _this2.setSchemaValues(schema, s.$id, values, e.formData);
+          },
+          schema: s // onChange={log("changed")}
+          // onSubmit={log("submitted")}
+          // onError={log("errors")}
+          ,
+          uiSchema: uiSchemaToRender[s.$id],
+          formData: valuesToRender[s.$id] // fields={customFields}
+          // widgets={customWidgets}
+          // FieldTemplate={CustomFieldTemplate}
+          // className={styles('m-8')}
 
+        });
       })))));
     }
   }]);
@@ -240,18 +251,6 @@ exports.extendUISchema = extendUISchema;
 exports.turnDescriptionToHintForLeaves = turnDescriptionToHintForLeaves;
 exports.trimRootTitle = trimRootTitle;
 exports.makeArraysNonOrderable = makeArraysNonOrderable;
-
-function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest(); }
-
-function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
-
-function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
-
-function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
-
-function _iterableToArrayLimit(arr, i) { if (typeof Symbol === "undefined" || !(Symbol.iterator in Object(arr))) return; var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
-
-function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 
 function subSchema(schema, schemaID) {
   if (schema.$id === schemaID) {
@@ -329,11 +328,15 @@ function filterDefaultValues(schema, values) {
       if (values[property] !== undefined) {
         values[property] = filterDefaultValues(schema.properties[property], values[property]);
 
-        if (values[property] === undefined || Object.keys(values[property]).length === 0 && values[property].constructor === Object) {
+        if (values[property] === undefined || Object.keys(values[property]).length === 0 && values[property].constructor === Object || JSON.stringify(values[property]) === '[]') {
           delete values[property];
         }
       }
     }
+  }
+
+  if (values === []) {
+    return undefined;
   }
 
   return values;
@@ -364,21 +367,15 @@ function turnDescriptionToHintForLeaves(schema, uiSchema) {
       delete schema.description;
     }
 
-    return [schema, uiSchema];
+    return uiSchema;
   }
 
   for (var _i6 = 0, _Object$keys6 = Object.keys(schema.properties); _i6 < _Object$keys6.length; _i6++) {
     var property = _Object$keys6[_i6];
-
-    var _turnDescriptionToHin = turnDescriptionToHintForLeaves(schema.properties[property], uiSchema[property]);
-
-    var _turnDescriptionToHin2 = _slicedToArray(_turnDescriptionToHin, 2);
-
-    schema.properties[property] = _turnDescriptionToHin2[0];
-    uiSchema[property] = _turnDescriptionToHin2[1];
+    uiSchema[property] = turnDescriptionToHintForLeaves(schema.properties[property], uiSchema[property]);
   }
 
-  return [schema, uiSchema];
+  return uiSchema;
 }
 
 function trimRootTitle(schema) {

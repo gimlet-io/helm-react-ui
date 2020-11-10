@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import Form from "@rjsf/core";
+import Form from '@rjsf/core'
 
 const CustomText = (props) => {
   return (
@@ -14,13 +14,13 @@ const CustomText = (props) => {
         />
       </div>
     </div>
-  );
-};
+  )
+}
 
 const CustomCheckbox = (props) => {
-  const {value} = props;
-  const translate = value ? 'translate-x-5' : 'translate-x-0';
-  const bg = value ? 'bg-indigo-600' : 'bg-gray-200';
+  const { value } = props
+  const translate = value ? 'translate-x-5' : 'translate-x-0'
+  const bg = value ? 'bg-indigo-600' : 'bg-gray-200'
   return (
     <span
       role="checkbox" tabindex="0"
@@ -31,47 +31,47 @@ const CustomCheckbox = (props) => {
               aria-hidden="true"
               className={`${translate} inline-block h-5 w-5 rounded-full bg-white shadow transform transition ease-in-out duration-200`}></span>
         </span>
-  );
-};
+  )
+}
 
 const CustomDescription = (props) => {
-  const {description} = props;
+  const { description } = props
   return (
     <p className="text-sm text-gray-500">{description}</p>
-  );
-};
+  )
+}
 
 const CustomTitle = (props) => {
-  const {title} = props;
+  const { title } = props
   return (
     <label className="block text-sm font-medium leading-5 text-gray-700">
       {title}
     </label>
-  );
-};
+  )
+}
 
 const CustomFieldTemplate = (props) => {
-  const {id, classNames, label, help, required, description, errors, children} = props;
+  const { id, classNames, label, help, required, description, errors, children } = props
   return (
     <div className={classNames}>
-      <label htmlFor={id}>{label}{required ? "*" : null}</label>
+      <label htmlFor={id}>{label}{required ? '*' : null}</label>
       {children}
       {description}
       {errors}
       {help}
     </div>
-  );
+  )
 }
 
 const customFields = {
   DescriptionField: CustomDescription,
   TitleField: CustomTitle,
-};
+}
 
 const customWidgets = {
   TextWidget: CustomText,
   CheckboxWidget: CustomCheckbox,
-};
+}
 
 // const log = (type) => console.log.bind(console, type);
 
@@ -80,19 +80,19 @@ export default class HelmUI extends Component {
     super(props)
 
     this.state = {
-      selectedID: this.props.config[0].schemaID
-    };
+      selected: this.props.config[0].metaData.name
+    }
   }
 
-  select (schemaID) {
+  select (name) {
     this.setState({
-      selectedID: schemaID
+      selected: name
     })
   }
 
   setSchemaValues (schema, schemaID, values, value) {
     const updatedValues = setSubSchemaValues(schema, schemaID, values, value)
-    this.props.setValues(updatedValues, filterDefaultValues(schema, JSON.parse(JSON.stringify(updatedValues))));
+    this.props.setValues(updatedValues, filterDefaultValues(schema, JSON.parse(JSON.stringify(updatedValues))))
   }
 
   render () {
@@ -106,22 +106,30 @@ export default class HelmUI extends Component {
       )
     }
 
-    let schemaToRender = {};
+    let schemasToRender = [];
     let uiSchemaToRender = {};
     let valuesToRender = {};
+    let _ = {};
 
     config.forEach((c) => {
-      if (c.schemaID === this.state.selectedID) {
-        schemaToRender = subSchema(schema, this.state.selectedID)
-        uiSchemaToRender = c.uiSchema;
-        valuesToRender = subSchemaValues(schema, this.state.selectedID, values);
+      if (c.metaData.name === this.state.selected) {
+        c.schemaIDs.forEach((schemaID) => {
+          schemasToRender.push(JSON.parse(JSON.stringify(subSchema(schema, schemaID))));
+          if (c.uiSchema[schemaID] === undefined) {
+            uiSchemaToRender[schemaID] = {};
+          } else {
+            uiSchemaToRender[schemaID] = c.uiSchema[schemaID]
+          }
+        })
       }
     })
 
-    uiSchemaToRender = extendUISchema(schemaToRender, uiSchemaToRender);
-    turnDescriptionToHintForLeaves(schemaToRender, uiSchemaToRender); // this should be, but doesn't work [schemaToRender, uiSchemaToRender] =
-    schemaToRender = trimRootTitle(schemaToRender);
-    uiSchemaToRender = makeArraysNonOrderable(schemaToRender, uiSchemaToRender);
+    schemasToRender.forEach((s) => {
+      uiSchemaToRender[s.$id] = extendUISchema(s, uiSchemaToRender[s.$id])
+      uiSchemaToRender[s.$id] = turnDescriptionToHintForLeaves(s, uiSchemaToRender[s.$id])
+      uiSchemaToRender[s.$id] = makeArraysNonOrderable(s, uiSchemaToRender[s.$id])
+      valuesToRender[s.$id] = subSchemaValues(schema, s.$id, values)
+    })
 
     return (
       <div className="lg:grid lg:grid-cols-12 lg:gap-x-5">
@@ -129,12 +137,12 @@ export default class HelmUI extends Component {
           <nav className="space-y-1">
             {
               config.map(c => {
-                const selected = this.state.selectedID === c.schemaID;
+                const selected = this.state.selected === c.metaData.name
                 return (
                   <a href="#"
                      className={'group rounded-md px-3 py-2 flex items-center text-sm leading-5 font-medium focus:outline-none transition ease-in-out duration-150 ' + (selected ? 'bg-gray-50 text-indigo-700 hover:bg-white' : 'text-gray-900 hover:bg-gray-50')}
                      aria-current="page"
-                     onClick={() => this.select(c.schemaID)}
+                     onClick={() => this.select(c.metaData.name)}
                   >
                     <svg
                       className={'flex-shrink-0 -ml-1 mr-3 h-6 w-6 transition ease-in-out duration-150 ' + (selected ? 'text-indigo-500 group-focus:text-indigo-600' : 'text-gray-400 group-focus:text-gray-500')}
@@ -163,19 +171,27 @@ export default class HelmUI extends Component {
         <div className="space-y-6 sm:px-6 lg:px-0 lg:col-span-9">
           <div className="shadow sm:rounded-md sm:overflow-hidden">
             <div className="bg-white py-6 px-4 space-y-6 sm:p-6">
-              <Form
-                onChange={e => this.setSchemaValues(schema, this.state.selectedID, values, e.formData)}
-                schema={schemaToRender}
-                // onChange={log("changed")}
-                // onSubmit={log("submitted")}
-                // onError={log("errors")}
-                uiSchema={uiSchemaToRender}
-                formData={valuesToRender}
-                // fields={customFields}
-                // widgets={customWidgets}
-                // FieldTemplate={CustomFieldTemplate}
-                // className={styles('m-8')}
-              />
+              {
+                schemasToRender.map(s => {
+                    return (
+                      <Form
+                        key={s.$id}
+                        onChange={e => this.setSchemaValues(schema, s.$id, values, e.formData)}
+                        schema={s}
+                        // onChange={log("changed")}
+                        // onSubmit={log("submitted")}
+                        // onError={log("errors")}
+                        uiSchema={uiSchemaToRender[s.$id]}
+                        formData={valuesToRender[s.$id]}
+                        // fields={customFields}
+                        // widgets={customWidgets}
+                        // FieldTemplate={CustomFieldTemplate}
+                        // className={styles('m-8')}
+                      />
+                    )
+                  }
+                )
+              }
             </div>
           </div>
         </div>

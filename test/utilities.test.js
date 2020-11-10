@@ -19,7 +19,7 @@ describe('subSchema', () => {
       'type': 'integer',
       'title': 'The cpu schema',
       'description': 'An explanation about the purpose of this instance.',
-      'default': 0,
+      'default': 32,
       'examples': [
         32
       ]
@@ -270,11 +270,36 @@ describe('extendUISchema', () => {
       field2: {}
     })
   })
+
+  it('should merge with existing uiSchema fields again', () => {
+    const extended = extendUISchema({
+      properties: {
+        field: {
+          properties: {
+            prop: {}
+          }
+        },
+        field2: {}
+      }
+    }, {
+      field: {
+        'uiEntry': 'value'
+      }
+    })
+
+    expect(extended).toStrictEqual({
+      field: {
+        'uiEntry': 'value',
+        prop: {}
+      },
+      field2: {}
+    })
+  })
 })
 
 describe('turnDescriptionToHintForLeaves', () => {
   it('should turn description into ui:hint', () => {
-    const [alteredSchema, extendedUISchema] = turnDescriptionToHintForLeaves({
+    const uiSchema = turnDescriptionToHintForLeaves({
       properties: {
         field: {
           description: 'random description'
@@ -286,14 +311,7 @@ describe('turnDescriptionToHintForLeaves', () => {
       field2: {}
     })
 
-    expect(alteredSchema).toStrictEqual({
-      properties: {
-        field: {},
-        field2: {}
-      }
-    })
-
-    expect(extendedUISchema).toStrictEqual({
+    expect(uiSchema).toStrictEqual({
       field: {
         'ui:help': 'random description'
       },
@@ -302,7 +320,7 @@ describe('turnDescriptionToHintForLeaves', () => {
   })
 
   it('should turn description into ui:hint only for leaves', () => {
-    const [alteredSchema, extendedUISchema] = turnDescriptionToHintForLeaves({
+    const uiSchema = turnDescriptionToHintForLeaves({
       properties: {
         field: {
           description: 'random description',
@@ -319,9 +337,33 @@ describe('turnDescriptionToHintForLeaves', () => {
       field2: {}
     })
 
-    expect(extendedUISchema).toStrictEqual({
+    expect(uiSchema).toStrictEqual({
       field: {
         prop: {}
+      },
+      field2: {}
+    })
+  })
+
+  it('should merge with existing uiSchema', () => {
+    const uiSchema = turnDescriptionToHintForLeaves({
+      properties: {
+        field: {
+          description: 'random description'
+        },
+        field2: {}
+      }
+    }, {
+      field: {
+        "ui:widget": "range"
+      },
+      field2: {}
+    })
+
+    expect(uiSchema).toStrictEqual({
+      field: {
+        'ui:help': 'random description',
+        "ui:widget": "range"
       },
       field2: {}
     })
@@ -451,7 +493,7 @@ describe('setSubSchemaValues', () => {
       })
 
       expect(s).toStrictEqual({});
-    })
+    });
 
     it('should filter out defaults from values', () => {
       const s = filterDefaultValues(schema, {
@@ -470,6 +512,14 @@ describe('setSubSchemaValues', () => {
           }
         }
       });
-    })
+    });
+
+    it('should filter out defaults from values', () => {
+      const s = filterDefaultValues(schema, {
+        namespaces: []
+      })
+
+      expect(s).toStrictEqual({});
+    });
   });
 })
