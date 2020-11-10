@@ -92,7 +92,7 @@ export default class HelmUI extends Component {
 
   setSchemaValues (schema, schemaID, values, value) {
     const updatedValues = setSubSchemaValues(schema, schemaID, values, value)
-    this.props.setValues(updatedValues);
+    this.props.setValues(updatedValues, filterDefaultValues(schema, JSON.parse(JSON.stringify(updatedValues))));
   }
 
   render () {

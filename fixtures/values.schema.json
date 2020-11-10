@@ -488,7 +488,7 @@
               "type": "integer",
               "title": "The cpu schema",
               "description": "An explanation about the purpose of this instance.",
-              "default": 0,
+              "default": 32,
               "examples": [
                 32
               ]
@@ -498,7 +498,7 @@
               "type": "string",
               "title": "The memory schema",
               "description": "An explanation about the purpose of this instance.",
-              "default": "",
+              "default": "64Gi",
               "examples": [
                 "64Gi"
               ]

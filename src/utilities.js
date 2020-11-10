@@ -55,8 +55,24 @@ export function setSubSchemaValues (schema, schemaID, values, value) {
   return values
 }
 
-export function isLeaf (schema) {
-  return schema.properties === undefined
+export function filterDefaultValues (schema, values) {
+  if (schema.default === values) {
+    return undefined;
+  }
+
+  if (schema.properties !== undefined) {
+    for (const property of Object.keys(schema.properties)) {
+      if (values[property] !== undefined) {
+        values[property] = filterDefaultValues(schema.properties[property], values[property])
+        if (values[property] === undefined ||
+          (Object.keys(values[property]).length === 0 && values[property].constructor === Object)) {
+          delete values[property];
+        }
+      }
+    }
+  }
+
+  return values
 }
 
 export function extendUISchema (schema, uiSchema) {

@@ -136,7 +136,7 @@ var HelmUI = /*#__PURE__*/function (_Component) {
     key: "setSchemaValues",
     value: function setSchemaValues(schema, schemaID, values, value) {
       var updatedValues = setSubSchemaValues(schema, schemaID, values, value);
-      this.props.setValues(updatedValues);
+      this.props.setValues(updatedValues, filterDefaultValues(schema, JSON.parse(JSON.stringify(updatedValues))));
     }
   }, {
     key: "render",
@@ -235,7 +235,7 @@ Object.defineProperty(exports, "__esModule", {
 exports.subSchema = subSchema;
 exports.subSchemaValues = subSchemaValues;
 exports.setSubSchemaValues = setSubSchemaValues;
-exports.isLeaf = isLeaf;
+exports.filterDefaultValues = filterDefaultValues;
 exports.extendUISchema = extendUISchema;
 exports.turnDescriptionToHintForLeaves = turnDescriptionToHintForLeaves;
 exports.trimRootTitle = trimRootTitle;
@@ -317,8 +317,26 @@ function setSubSchemaValues(schema, schemaID, values, value) {
   return values;
 }
 
-function isLeaf(schema) {
-  return schema.properties === undefined;
+function filterDefaultValues(schema, values) {
+  if (schema["default"] === values) {
+    return undefined;
+  }
+
+  if (schema.properties !== undefined) {
+    for (var _i4 = 0, _Object$keys4 = Object.keys(schema.properties); _i4 < _Object$keys4.length; _i4++) {
+      var property = _Object$keys4[_i4];
+
+      if (values[property] !== undefined) {
+        values[property] = filterDefaultValues(schema.properties[property], values[property]);
+
+        if (values[property] === undefined || Object.keys(values[property]).length === 0 && values[property].constructor === Object) {
+          delete values[property];
+        }
+      }
+    }
+  }
+
+  return values;
 }
 
 function extendUISchema(schema, uiSchema) {
@@ -326,8 +344,8 @@ function extendUISchema(schema, uiSchema) {
     return uiSchema;
   }
 
-  for (var _i4 = 0, _Object$keys4 = Object.keys(schema.properties); _i4 < _Object$keys4.length; _i4++) {
-    var property = _Object$keys4[_i4];
+  for (var _i5 = 0, _Object$keys5 = Object.keys(schema.properties); _i5 < _Object$keys5.length; _i5++) {
+    var property = _Object$keys5[_i5];
 
     if (uiSchema[property] === undefined) {
       uiSchema[property] = {};
@@ -349,8 +367,8 @@ function turnDescriptionToHintForLeaves(schema, uiSchema) {
     return [schema, uiSchema];
   }
 
-  for (var _i5 = 0, _Object$keys5 = Object.keys(schema.properties); _i5 < _Object$keys5.length; _i5++) {
-    var property = _Object$keys5[_i5];
+  for (var _i6 = 0, _Object$keys6 = Object.keys(schema.properties); _i6 < _Object$keys6.length; _i6++) {
+    var property = _Object$keys6[_i6];
 
     var _turnDescriptionToHin = turnDescriptionToHintForLeaves(schema.properties[property], uiSchema[property]);
 
@@ -380,8 +398,8 @@ function makeArraysNonOrderable(schema, uiSchema) {
   }
 
   if (schema.properties !== undefined) {
-    for (var _i6 = 0, _Object$keys6 = Object.keys(schema.properties); _i6 < _Object$keys6.length; _i6++) {
-      var property = _Object$keys6[_i6];
+    for (var _i7 = 0, _Object$keys7 = Object.keys(schema.properties); _i7 < _Object$keys7.length; _i7++) {
+      var property = _Object$keys7[_i7];
       uiSchema[property] = makeArraysNonOrderable(schema.properties[property], uiSchema[property]);
     }
   }

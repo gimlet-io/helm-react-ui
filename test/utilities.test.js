@@ -6,7 +6,8 @@ import {
   setSubSchemaValues,
   subSchema,
   subSchemaValues,
-  turnDescriptionToHintForLeaves
+  turnDescriptionToHintForLeaves,
+  filterDefaultValues
 } from '../src/utilities'
 
 describe('subSchema', () => {
@@ -437,4 +438,38 @@ describe('setSubSchemaValues', () => {
       }
     })
   })
+
+  describe('filterDefaultValues', () => {
+    it('should filter out defaults from values', () => {
+      const s = filterDefaultValues(schema, {
+        namespace: {
+          budget: {
+            cpu: 32,
+            memory: "64Gi"
+          }
+        }
+      })
+
+      expect(s).toStrictEqual({});
+    })
+
+    it('should filter out defaults from values', () => {
+      const s = filterDefaultValues(schema, {
+        namespace: {
+          budget: {
+            cpu: 32,
+            memory: "65Gi"
+          }
+        }
+      })
+
+      expect(s).toStrictEqual({
+        namespace: {
+          budget: {
+            memory: "65Gi"
+          }
+        }
+      });
+    })
+  });
 })
