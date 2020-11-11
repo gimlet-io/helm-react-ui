@@ -5,32 +5,29 @@ const CustomText = (props) => {
   return (
     <div>
       <div className="mt-1 relative rounded-md shadow-sm">
-        <input
-          type="text"
-          className="form-input block w-full sm:text-sm sm:leading-5"
-          value={props.value}
-          required={props.required}
-          onChange={(event) => props.onChange(event.target.value)}
-        />
+        myWidget
       </div>
     </div>
   )
 }
 
 const CustomCheckbox = (props) => {
-  const { value } = props
+  const { value, label } = props
   const translate = value ? 'translate-x-5' : 'translate-x-0'
   const bg = value ? 'bg-indigo-600' : 'bg-gray-200'
   return (
-    <span
-      role="checkbox" tabindex="0"
-      aria-checked={value}
-      onClick={(event) => props.onChange(!value)}
-      className={'${bg} mt-1 relative inline-flex flex-shrink-0 h-6 w-11 border-2 border-transparent rounded-full cursor-pointer transition-colors ease-in-out duration-200 focus:outline-none focus:shadow-outline'}>
-            <span
-              aria-hidden="true"
-              className={`${translate} inline-block h-5 w-5 rounded-full bg-white shadow transform transition ease-in-out duration-200`}></span>
-        </span>
+    <div>
+      <label class="control-label">{label}</label>
+      <span
+        role="checkbox" tabindex="0"
+        aria-checked={value}
+        onClick={(event) => props.onChange(!value)}
+        className={`${bg} mt-1 relative inline-flex flex-shrink-0 h-6 w-11 border-2 border-transparent rounded-full cursor-pointer transition-colors ease-in-out duration-200 focus:outline-none focus:shadow-outline`}>
+              <span
+                aria-hidden="true"
+                className={`${translate} inline-block h-5 w-5 rounded-full bg-white shadow transform transition ease-in-out duration-200`}></span>
+          </span>
+    </div>
   )
 }
 
@@ -69,7 +66,6 @@ const customFields = {
 }
 
 const customWidgets = {
-  TextWidget: CustomText,
   CheckboxWidget: CustomCheckbox,
 }
 
@@ -106,17 +102,17 @@ export default class HelmUI extends Component {
       )
     }
 
-    let schemasToRender = [];
-    let uiSchemaToRender = {};
-    let valuesToRender = {};
-    let _ = {};
+    let schemasToRender = []
+    let uiSchemaToRender = {}
+    let valuesToRender = {}
+    let _ = {}
 
     config.forEach((c) => {
       if (c.metaData.name === this.state.selected) {
         c.schemaIDs.forEach((schemaID) => {
-          schemasToRender.push(JSON.parse(JSON.stringify(subSchema(schema, schemaID))));
+          schemasToRender.push(JSON.parse(JSON.stringify(subSchema(schema, schemaID))))
           if (c.uiSchema[schemaID] === undefined) {
-            uiSchemaToRender[schemaID] = {};
+            uiSchemaToRender[schemaID] = {}
           } else {
             uiSchemaToRender[schemaID] = c.uiSchema[schemaID]
           }
@@ -184,7 +180,7 @@ export default class HelmUI extends Component {
                         uiSchema={uiSchemaToRender[s.$id]}
                         formData={valuesToRender[s.$id]}
                         // fields={customFields}
-                        // widgets={customWidgets}
+                        widgets={customWidgets}
                         // FieldTemplate={CustomFieldTemplate}
                         // className={styles('m-8')}
                       />

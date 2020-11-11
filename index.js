@@ -40,33 +40,28 @@ function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.g
 var CustomText = function CustomText(props) {
   return /*#__PURE__*/_react["default"].createElement("div", null, /*#__PURE__*/_react["default"].createElement("div", {
     className: "mt-1 relative rounded-md shadow-sm"
-  }, /*#__PURE__*/_react["default"].createElement("input", {
-    type: "text",
-    className: "form-input block w-full sm:text-sm sm:leading-5",
-    value: props.value,
-    required: props.required,
-    onChange: function onChange(event) {
-      return props.onChange(event.target.value);
-    }
-  })));
+  }, "myWidget"));
 };
 
 var CustomCheckbox = function CustomCheckbox(props) {
-  var value = props.value;
+  var value = props.value,
+      label = props.label;
   var translate = value ? 'translate-x-5' : 'translate-x-0';
   var bg = value ? 'bg-indigo-600' : 'bg-gray-200';
-  return /*#__PURE__*/_react["default"].createElement("span", {
+  return /*#__PURE__*/_react["default"].createElement("div", null, /*#__PURE__*/_react["default"].createElement("label", {
+    "class": "control-label"
+  }, label), /*#__PURE__*/_react["default"].createElement("span", {
     role: "checkbox",
     tabindex: "0",
     "aria-checked": value,
     onClick: function onClick(event) {
       return props.onChange(!value);
     },
-    className: '${bg} mt-1 relative inline-flex flex-shrink-0 h-6 w-11 border-2 border-transparent rounded-full cursor-pointer transition-colors ease-in-out duration-200 focus:outline-none focus:shadow-outline'
+    className: "".concat(bg, " mt-1 relative inline-flex flex-shrink-0 h-6 w-11 border-2 border-transparent rounded-full cursor-pointer transition-colors ease-in-out duration-200 focus:outline-none focus:shadow-outline")
   }, /*#__PURE__*/_react["default"].createElement("span", {
     "aria-hidden": "true",
     className: "".concat(translate, " inline-block h-5 w-5 rounded-full bg-white shadow transform transition ease-in-out duration-200")
-  }));
+  })));
 };
 
 var CustomDescription = function CustomDescription(props) {
@@ -104,7 +99,6 @@ var customFields = {
   TitleField: CustomTitle
 };
 var customWidgets = {
-  TextWidget: CustomText,
   CheckboxWidget: CustomCheckbox
 }; // const log = (type) => console.log.bind(console, type);
 
@@ -225,8 +219,8 @@ var HelmUI = /*#__PURE__*/function (_Component) {
           ,
           uiSchema: uiSchemaToRender[s.$id],
           formData: valuesToRender[s.$id] // fields={customFields}
-          // widgets={customWidgets}
-          // FieldTemplate={CustomFieldTemplate}
+          ,
+          widgets: customWidgets // FieldTemplate={CustomFieldTemplate}
           // className={styles('m-8')}
 
         });

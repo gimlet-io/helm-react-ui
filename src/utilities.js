@@ -1,23 +1,23 @@
 export function subSchema (schema, schemaID) {
   if (schema.$id === schemaID) {
-    return schema;
+    return schema
   }
 
   if (schema.properties !== undefined) {
     for (const property of Object.keys(schema.properties)) {
       const found = subSchema(schema.properties[property], schemaID)
       if (found !== undefined) {
-        return found;
+        return found
       }
     }
   }
 
-  return undefined;
+  return undefined
 }
 
 export function subSchemaValues (schema, schemaID, values) {
   if (schema.$id === schemaID) {
-    return values;
+    return values
   }
 
   if (schema.properties !== undefined) {
@@ -25,7 +25,7 @@ export function subSchemaValues (schema, schemaID, values) {
       if (values[property] !== undefined) {
         const found = subSchemaValues(schema.properties[property], schemaID, values[property])
         if (found !== undefined) {
-          return found;
+          return found
         }
       }
     }
@@ -36,18 +36,18 @@ export function subSchemaValues (schema, schemaID, values) {
 
 export function setSubSchemaValues (schema, schemaID, values, value) {
   if (schema.$id === schemaID) {
-    return value;
+    return value
   }
 
   if (values === undefined) {
-    return values;
+    return values
   }
 
   if (schema.properties !== undefined) {
     for (const property of Object.keys(schema.properties)) {
       const v = setSubSchemaValues(schema.properties[property], schemaID, values[property], value)
       if (v !== undefined) {
-        values[property] = v;
+        values[property] = v
       }
     }
   }
@@ -57,7 +57,7 @@ export function setSubSchemaValues (schema, schemaID, values, value) {
 
 export function filterDefaultValues (schema, values) {
   if (schema.default === values) {
-    return undefined;
+    return undefined
   }
 
   if (schema.properties !== undefined) {
@@ -67,7 +67,7 @@ export function filterDefaultValues (schema, values) {
         if (values[property] === undefined ||
           (Object.keys(values[property]).length === 0 && values[property].constructor === Object) ||
           JSON.stringify(values[property]) === '[]') {
-          delete values[property];
+          delete values[property]
         }
       }
     }
@@ -102,14 +102,14 @@ export function turnDescriptionToHintForLeaves (schema, uiSchema) {
       uiSchema['ui:help'] = schema.description
       delete schema.description
     }
-    return uiSchema;
+    return uiSchema
   }
 
   for (const property of Object.keys(schema.properties)) {
     uiSchema[property] = turnDescriptionToHintForLeaves(schema.properties[property], uiSchema[property])
   }
 
-  return uiSchema;
+  return uiSchema
 }
 
 export function trimRootTitle (schema) {

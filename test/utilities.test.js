@@ -7,7 +7,8 @@ import {
   subSchema,
   subSchemaValues,
   turnDescriptionToHintForLeaves,
-  filterDefaultValues
+  filterDefaultValues,
+  customWidget
 } from '../src/utilities'
 
 describe('subSchema', () => {
