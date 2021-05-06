@@ -127,8 +127,17 @@ export default class HelmUI extends Component {
       valuesToRender[s.$id] = subSchemaValues(schema, s.$id, values)
     })
 
+    const sidebar = config.length > 1
+    let gridClass = 'lg:grid lg:grid-cols-12 lg:gap-x-5';
+    let gridSpan = 'lg:col-span-9'
+    if (!sidebar) {
+      gridClass = '';
+      gridSpan = '';
+    }
+
     return (
-      <div className="lg:grid lg:grid-cols-12 lg:gap-x-5">
+      <div className={gridClass}>
+        { sidebar &&
         <aside className="py-6 px-2 sm:px-6 lg:py-0 lg:px-0 lg:col-span-3">
           <nav className="space-y-1">
             {
@@ -163,32 +172,30 @@ export default class HelmUI extends Component {
             }
           </nav>
         </aside>
-
-        <div className="space-y-6 sm:px-6 lg:px-0 lg:col-span-9">
-          <div className="shadow sm:rounded-md sm:overflow-hidden">
-            <div className="bg-white py-6 px-4 space-y-6 sm:p-6">
-              {
-                schemasToRender.map(s => {
-                    return (
-                      <Form
-                        key={s.$id}
-                        onChange={e => this.setSchemaValues(schema, s.$id, values, e.formData)}
-                        schema={s}
-                        // onChange={log("changed")}
-                        // onSubmit={log("submitted")}
-                        // onError={log("errors")}
-                        uiSchema={uiSchemaToRender[s.$id]}
-                        formData={valuesToRender[s.$id]}
-                        // fields={customFields}
-                        widgets={customWidgets}
-                        // FieldTemplate={CustomFieldTemplate}
-                        // className={styles('m-8')}
-                      />
-                    )
-                  }
+        }
+        <div className={gridSpan}>
+          <div className="space-y-6 sm:px-6 lg:px-0">
+          {
+            schemasToRender.map(s => {
+                return (
+                  <Form
+                    key={s.$id}
+                    onChange={e => this.setSchemaValues(schema, s.$id, values, e.formData)}
+                    schema={s}
+                    // onChange={log("changed")}
+                    // onSubmit={log("submitted")}
+                    // onError={log("errors")}
+                    uiSchema={uiSchemaToRender[s.$id]}
+                    formData={valuesToRender[s.$id]}
+                    // fields={customFields}
+                    widgets={customWidgets}
+                    // FieldTemplate={CustomFieldTemplate}
+                    // className={styles('m-8')}
+                  />
                 )
               }
-            </div>
+            )
+          }
           </div>
         </div>
       </div>

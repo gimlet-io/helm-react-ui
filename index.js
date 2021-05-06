@@ -171,9 +171,18 @@ var HelmUI = /*#__PURE__*/function (_Component) {
         uiSchemaToRender[s.$id] = makeArraysNonOrderable(s, uiSchemaToRender[s.$id]);
         valuesToRender[s.$id] = subSchemaValues(schema, s.$id, values);
       });
+      var sidebar = config.length > 1;
+      var gridClass = 'lg:grid lg:grid-cols-12 lg:gap-x-5';
+      var gridSpan = 'lg:col-span-9';
+
+      if (!sidebar) {
+        gridClass = '';
+        gridSpan = '';
+      }
+
       return /*#__PURE__*/_react["default"].createElement("div", {
-        className: "lg:grid lg:grid-cols-12 lg:gap-x-5"
-      }, /*#__PURE__*/_react["default"].createElement("aside", {
+        className: gridClass
+      }, sidebar && /*#__PURE__*/_react["default"].createElement("aside", {
         className: "py-6 px-2 sm:px-6 lg:py-0 lg:px-0 lg:col-span-3"
       }, /*#__PURE__*/_react["default"].createElement("nav", {
         className: "space-y-1"
@@ -202,11 +211,9 @@ var HelmUI = /*#__PURE__*/function (_Component) {
           className: "truncate"
         }, c.metaData.name));
       }))), /*#__PURE__*/_react["default"].createElement("div", {
-        className: "space-y-6 sm:px-6 lg:px-0 lg:col-span-9"
+        className: gridSpan
       }, /*#__PURE__*/_react["default"].createElement("div", {
-        className: "shadow sm:rounded-md sm:overflow-hidden"
-      }, /*#__PURE__*/_react["default"].createElement("div", {
-        className: "bg-white py-6 px-4 space-y-6 sm:p-6"
+        className: "space-y-6 sm:px-6 lg:px-0"
       }, schemasToRender.map(function (s) {
         return /*#__PURE__*/_react["default"].createElement(_core["default"], {
           key: s.$id,
@@ -224,7 +231,7 @@ var HelmUI = /*#__PURE__*/function (_Component) {
           // className={styles('m-8')}
 
         });
-      })))));
+      }))));
     }
   }]);
 
