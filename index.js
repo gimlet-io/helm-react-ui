@@ -306,9 +306,14 @@ function setSubSchemaValues(schema, schemaID, values, value) {
   if (schema.properties !== undefined) {
     for (var _i3 = 0, _Object$keys3 = Object.keys(schema.properties); _i3 < _Object$keys3.length; _i3++) {
       var property = _Object$keys3[_i3];
+      var propertySchema = schema.properties[property];
       var v = setSubSchemaValues(schema.properties[property], schemaID, values[property], value);
 
       if (v !== undefined) {
+        values[property] = v;
+      }
+
+      if (propertySchema.type === 'string' && v === undefined && values[property].length === 1) {
         values[property] = v;
       }
     }
