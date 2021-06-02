@@ -9,6 +9,8 @@ var _react = _interopRequireWildcard(require("react"));
 
 var _core = _interopRequireDefault(require("@rjsf/core"));
 
+var _ajv = _interopRequireDefault(require("ajv"));
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 
 function _getRequireWildcardCache() { if (typeof WeakMap !== "function") return null; var cache = new WeakMap(); _getRequireWildcardCache = function _getRequireWildcardCache() { return cache; }; return cache; }
@@ -114,6 +116,7 @@ var HelmUI = /*#__PURE__*/function (_Component) {
 
     _this = _super.call(this, props);
     _this.state = {
+      ajv: new _ajv["default"](),
       selected: _this.props.config[0].metaData.name
     };
     return _this;
@@ -130,6 +133,8 @@ var HelmUI = /*#__PURE__*/function (_Component) {
     key: "setSchemaValues",
     value: function setSchemaValues(schema, schemaID, values, value) {
       var updatedValues = setSubSchemaValues(schema, schemaID, values, value);
+      var valid = this.state.ajv.validate(schema, updatedValues);
+      this.props.validationCallback(this.state.ajv.errors);
       this.props.setValues(updatedValues, filterDefaultValues(schema, JSON.parse(JSON.stringify(updatedValues))));
     }
   }, {
@@ -140,7 +145,9 @@ var HelmUI = /*#__PURE__*/function (_Component) {
       var _this$props = this.props,
           schema = _this$props.schema,
           config = _this$props.config,
-          values = _this$props.values;
+          values = _this$props.values,
+          validate = _this$props.validate,
+          validationCallback = _this$props.validationCallback;
 
       if (!schema || !config) {
         return /*#__PURE__*/_react["default"].createElement("div", {
@@ -229,7 +236,8 @@ var HelmUI = /*#__PURE__*/function (_Component) {
           ,
           widgets: customWidgets // FieldTemplate={CustomFieldTemplate}
           // className={styles('m-8')}
-
+          ,
+          liveValidate: validate
         });
       }))));
     }

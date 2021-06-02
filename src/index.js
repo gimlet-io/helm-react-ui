@@ -1,5 +1,6 @@
-import React, { Component } from 'react'
+import React, {Component} from 'react'
 import Form from '@rjsf/core'
+import Ajv from "ajv"
 
 const CustomText = (props) => {
   return (
@@ -12,7 +13,7 @@ const CustomText = (props) => {
 }
 
 const CustomCheckbox = (props) => {
-  const { value, label } = props
+  const {value, label} = props
   const translate = value ? 'translate-x-5' : 'translate-x-0'
   const bg = value ? 'bg-indigo-600' : 'bg-gray-200'
   return (
@@ -32,14 +33,14 @@ const CustomCheckbox = (props) => {
 }
 
 const CustomDescription = (props) => {
-  const { description } = props
+  const {description} = props
   return (
     <p className="text-sm text-gray-500">{description}</p>
   )
 }
 
 const CustomTitle = (props) => {
-  const { title } = props
+  const {title} = props
   return (
     <label className="block text-sm font-medium leading-5 text-gray-700">
       {title}
@@ -48,7 +49,7 @@ const CustomTitle = (props) => {
 }
 
 const CustomFieldTemplate = (props) => {
-  const { id, classNames, label, help, required, description, errors, children } = props
+  const {id, classNames, label, help, required, description, errors, children} = props
   return (
     <div className={classNames}>
       <label htmlFor={id}>{label}{required ? '*' : null}</label>
@@ -72,27 +73,32 @@ const customWidgets = {
 // const log = (type) => console.log.bind(console, type);
 
 export default class HelmUI extends Component {
-  constructor (props) {
+  constructor(props) {
     super(props)
 
     this.state = {
+      ajv: new Ajv(),
       selected: this.props.config[0].metaData.name
     }
   }
 
-  select (name) {
+  select(name) {
     this.setState({
       selected: name
     })
   }
 
-  setSchemaValues (schema, schemaID, values, value) {
+  setSchemaValues(schema, schemaID, values, value) {
     const updatedValues = setSubSchemaValues(schema, schemaID, values, value)
+
+    const valid = this.state.ajv.validate(schema, updatedValues)
+    this.props.validationCallback(this.state.ajv.errors)
+
     this.props.setValues(updatedValues, filterDefaultValues(schema, JSON.parse(JSON.stringify(updatedValues))))
   }
 
-  render () {
-    const { schema, config, values } = this.props
+  render() {
+    const {schema, config, values, validate, validationCallback} = this.props
 
     if (!schema || !config) {
       return (
@@ -137,7 +143,7 @@ export default class HelmUI extends Component {
 
     return (
       <div className={gridClass}>
-        { sidebar &&
+        {sidebar &&
         <aside className="py-6 px-2 sm:px-6 lg:py-0 lg:px-0 lg:col-span-3">
           <nav className="space-y-1">
             {
@@ -175,27 +181,28 @@ export default class HelmUI extends Component {
         }
         <div className={gridSpan}>
           <div className="space-y-6 sm:px-6 lg:px-0">
-          {
-            schemasToRender.map(s => {
-                return (
-                  <Form
-                    key={s.$id}
-                    onChange={e => this.setSchemaValues(schema, s.$id, values, e.formData)}
-                    schema={s}
-                    // onChange={log("changed")}
-                    // onSubmit={log("submitted")}
-                    // onError={log("errors")}
-                    uiSchema={uiSchemaToRender[s.$id]}
-                    formData={valuesToRender[s.$id]}
-                    // fields={customFields}
-                    widgets={customWidgets}
-                    // FieldTemplate={CustomFieldTemplate}
-                    // className={styles('m-8')}
-                  />
-                )
-              }
-            )
-          }
+            {
+              schemasToRender.map(s => {
+                  return (
+                    <Form
+                      key={s.$id}
+                      onChange={e => this.setSchemaValues(schema, s.$id, values, e.formData)}
+                      schema={s}
+                      // onChange={log("changed")}
+                      // onSubmit={log("submitted")}
+                      // onError={log("errors")}
+                      uiSchema={uiSchemaToRender[s.$id]}
+                      formData={valuesToRender[s.$id]}
+                      // fields={customFields}
+                      widgets={customWidgets}
+                      // FieldTemplate={CustomFieldTemplate}
+                      // className={styles('m-8')}
+                      liveValidate={validate}
+                    />
+                  )
+                }
+              )
+            }
           </div>
         </div>
       </div>
