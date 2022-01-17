@@ -45,8 +45,16 @@ export function setSubSchemaValues (schema, schemaID, values, value) {
 
   if (schema.properties !== undefined) {
     for (const property of Object.keys(schema.properties)) {
+      const propertySchema = schema.properties[property];
       const v = setSubSchemaValues(schema.properties[property], schemaID, values[property], value)
+
       if (v !== undefined) {
+        values[property] = v
+      }
+
+      if (propertySchema.type === 'string'
+          && v === undefined
+          && values[property] && values[property].length === 1) {
         values[property] = v
       }
     }

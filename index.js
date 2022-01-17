@@ -9,6 +9,8 @@ var _react = _interopRequireWildcard(require("react"));
 
 var _core = _interopRequireDefault(require("@rjsf/core"));
 
+var _ajv = _interopRequireDefault(require("ajv"));
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 
 function _getRequireWildcardCache() { if (typeof WeakMap !== "function") return null; var cache = new WeakMap(); _getRequireWildcardCache = function _getRequireWildcardCache() { return cache; }; return cache; }
@@ -114,6 +116,7 @@ var HelmUI = /*#__PURE__*/function (_Component) {
 
     _this = _super.call(this, props);
     _this.state = {
+      ajv: new _ajv["default"](),
       selected: _this.props.config[0].metaData.name
     };
     return _this;
@@ -130,6 +133,8 @@ var HelmUI = /*#__PURE__*/function (_Component) {
     key: "setSchemaValues",
     value: function setSchemaValues(schema, schemaID, values, value) {
       var updatedValues = setSubSchemaValues(schema, schemaID, values, value);
+      var valid = this.state.ajv.validate(schema, updatedValues);
+      this.props.validationCallback(this.state.ajv.errors);
       this.props.setValues(updatedValues, filterDefaultValues(schema, JSON.parse(JSON.stringify(updatedValues))));
     }
   }, {
@@ -140,7 +145,9 @@ var HelmUI = /*#__PURE__*/function (_Component) {
       var _this$props = this.props,
           schema = _this$props.schema,
           config = _this$props.config,
-          values = _this$props.values;
+          values = _this$props.values,
+          validate = _this$props.validate,
+          validationCallback = _this$props.validationCallback;
 
       if (!schema || !config) {
         return /*#__PURE__*/_react["default"].createElement("div", {
@@ -171,9 +178,18 @@ var HelmUI = /*#__PURE__*/function (_Component) {
         uiSchemaToRender[s.$id] = makeArraysNonOrderable(s, uiSchemaToRender[s.$id]);
         valuesToRender[s.$id] = subSchemaValues(schema, s.$id, values);
       });
+      var sidebar = config.length > 1;
+      var gridClass = 'lg:grid lg:grid-cols-12 lg:gap-x-5';
+      var gridSpan = 'lg:col-span-9';
+
+      if (!sidebar) {
+        gridClass = '';
+        gridSpan = '';
+      }
+
       return /*#__PURE__*/_react["default"].createElement("div", {
-        className: "lg:grid lg:grid-cols-12 lg:gap-x-5"
-      }, /*#__PURE__*/_react["default"].createElement("aside", {
+        className: gridClass
+      }, sidebar && /*#__PURE__*/_react["default"].createElement("aside", {
         className: "py-6 px-2 sm:px-6 lg:py-0 lg:px-0 lg:col-span-3"
       }, /*#__PURE__*/_react["default"].createElement("nav", {
         className: "space-y-1"
@@ -202,11 +218,9 @@ var HelmUI = /*#__PURE__*/function (_Component) {
           className: "truncate"
         }, c.metaData.name));
       }))), /*#__PURE__*/_react["default"].createElement("div", {
-        className: "space-y-6 sm:px-6 lg:px-0 lg:col-span-9"
+        className: gridSpan
       }, /*#__PURE__*/_react["default"].createElement("div", {
-        className: "shadow sm:rounded-md sm:overflow-hidden"
-      }, /*#__PURE__*/_react["default"].createElement("div", {
-        className: "bg-white py-6 px-4 space-y-6 sm:p-6"
+        className: "space-y-6 sm:px-6 lg:px-0"
       }, schemasToRender.map(function (s) {
         return /*#__PURE__*/_react["default"].createElement(_core["default"], {
           key: s.$id,
@@ -222,9 +236,10 @@ var HelmUI = /*#__PURE__*/function (_Component) {
           ,
           widgets: customWidgets // FieldTemplate={CustomFieldTemplate}
           // className={styles('m-8')}
-
+          ,
+          liveValidate: validate
         });
-      })))));
+      }))));
     }
   }]);
 
@@ -299,9 +314,14 @@ function setSubSchemaValues(schema, schemaID, values, value) {
   if (schema.properties !== undefined) {
     for (var _i3 = 0, _Object$keys3 = Object.keys(schema.properties); _i3 < _Object$keys3.length; _i3++) {
       var property = _Object$keys3[_i3];
+      var propertySchema = schema.properties[property];
       var v = setSubSchemaValues(schema.properties[property], schemaID, values[property], value);
 
       if (v !== undefined) {
+        values[property] = v;
+      }
+
+      if (propertySchema.type === 'string' && v === undefined && values[property] && values[property].length === 1) {
         values[property] = v;
       }
     }
