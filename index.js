@@ -321,7 +321,7 @@ function setSubSchemaValues(schema, schemaID, values, value) {
         values[property] = v;
       }
 
-      if (propertySchema.type === 'string' && v === undefined && values[property].length === 1) {
+      if (propertySchema.type === 'string' && v === undefined && values[property] && values[property].length === 1) {
         values[property] = v;
       }
     }
