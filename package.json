@@ -24,10 +24,6 @@
     "react": "^16.6.1",
     "react-dom": "^16.6.3"
   },
-  "peerDependencies": {
-    "react": "^16.6.1",
-    "react-dom": "^16.6.3"
-  },
   "jest": {
     "moduleDirectories": [
       "node_modules"
