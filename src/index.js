@@ -1,4 +1,5 @@
 import React, {Component} from 'react'
+import Markdown from 'react-markdown'
 import Form from '@rjsf/core'
 import Ajv from "ajv"
 
@@ -126,9 +127,20 @@ export default class HelmUI extends Component {
       }
     })
 
+    function addMarkdownTagToHelpFields(uiSchema) {
+      for (const key of Object.keys(uiSchema)) {
+        if (uiSchema[key]["ui:help"]) {
+          uiSchema[key]["ui:help"] = <Markdown children={uiSchema[key]["ui:help"]} />
+        }
+      }
+
+      return uiSchema
+    }
+
     schemasToRender.forEach((s) => {
       uiSchemaToRender[s.$id] = extendUISchema(s, uiSchemaToRender[s.$id])
       uiSchemaToRender[s.$id] = turnDescriptionToHintForLeaves(s, uiSchemaToRender[s.$id])
+      uiSchemaToRender[s.$id] = addMarkdownTagToHelpFields(uiSchemaToRender[s.$id])
       uiSchemaToRender[s.$id] = makeArraysNonOrderable(s, uiSchemaToRender[s.$id])
       valuesToRender[s.$id] = subSchemaValues(schema, s.$id, values)
     })

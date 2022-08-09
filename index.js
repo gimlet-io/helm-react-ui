@@ -9,6 +9,8 @@ exports["default"] = void 0;
 
 var _react = _interopRequireWildcard(require("react"));
 
+var _reactMarkdown = _interopRequireDefault(require("react-markdown"));
+
 var _core = _interopRequireDefault(require("@rjsf/core"));
 
 var _ajv = _interopRequireDefault(require("ajv"));
@@ -172,9 +174,25 @@ var HelmUI = /*#__PURE__*/function (_Component) {
           });
         }
       });
+
+      function addMarkdownTagToHelpFields(uiSchema) {
+        for (var _i = 0, _Object$keys = Object.keys(uiSchema); _i < _Object$keys.length; _i++) {
+          var key = _Object$keys[_i];
+
+          if (uiSchema[key]["ui:help"]) {
+            uiSchema[key]["ui:help"] = /*#__PURE__*/_react["default"].createElement(_reactMarkdown["default"], {
+              children: uiSchema[key]["ui:help"]
+            });
+          }
+        }
+
+        return uiSchema;
+      }
+
       schemasToRender.forEach(function (s) {
         uiSchemaToRender[s.$id] = extendUISchema(s, uiSchemaToRender[s.$id]);
         uiSchemaToRender[s.$id] = turnDescriptionToHintForLeaves(s, uiSchemaToRender[s.$id]);
+        uiSchemaToRender[s.$id] = addMarkdownTagToHelpFields(uiSchemaToRender[s.$id]);
         uiSchemaToRender[s.$id] = makeArraysNonOrderable(s, uiSchemaToRender[s.$id]);
         valuesToRender[s.$id] = subSchemaValues(schema, s.$id, values);
       });
