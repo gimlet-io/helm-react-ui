@@ -33,22 +33,6 @@ const CustomCheckbox = (props) => {
   )
 }
 
-const CustomDescription = (props) => {
-  const {description} = props
-  return (
-    <p className="text-sm text-gray-500">{description}</p>
-  )
-}
-
-const CustomTitle = (props) => {
-  const {title} = props
-  return (
-    <label className="block text-sm font-medium leading-5 text-gray-700">
-      {title}
-    </label>
-  )
-}
-
 const CustomFieldTemplate = (props) => {
   const {id, classNames, label, help, required, description, errors, children} = props
   return (
@@ -60,11 +44,6 @@ const CustomFieldTemplate = (props) => {
       {help}
     </div>
   )
-}
-
-const customFields = {
-  DescriptionField: CustomDescription,
-  TitleField: CustomTitle,
 }
 
 const customWidgets = {
@@ -99,7 +78,7 @@ export default class HelmUI extends Component {
   }
 
   render() {
-    const {schema, config, values, validate, validationCallback} = this.props
+    const {schema, config, values, validate, validationCallback, fields} = this.props
 
     if (!schema || !config) {
       return (
@@ -200,12 +179,11 @@ export default class HelmUI extends Component {
                       key={s.$id}
                       onChange={e => this.setSchemaValues(schema, s.$id, values, e.formData)}
                       schema={s}
-                      // onChange={log("changed")}
                       // onSubmit={log("submitted")}
                       // onError={log("errors")}
                       uiSchema={uiSchemaToRender[s.$id]}
                       formData={valuesToRender[s.$id]}
-                      // fields={customFields}
+                      fields={fields}
                       widgets={customWidgets}
                       // FieldTemplate={CustomFieldTemplate}
                       // className={styles('m-8')}

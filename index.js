@@ -68,20 +68,6 @@ var CustomCheckbox = function CustomCheckbox(props) {
   })));
 };
 
-var CustomDescription = function CustomDescription(props) {
-  var description = props.description;
-  return /*#__PURE__*/_react["default"].createElement("p", {
-    className: "text-sm text-gray-500"
-  }, description);
-};
-
-var CustomTitle = function CustomTitle(props) {
-  var title = props.title;
-  return /*#__PURE__*/_react["default"].createElement("label", {
-    className: "block text-sm font-medium leading-5 text-gray-700"
-  }, title);
-};
-
 var CustomFieldTemplate = function CustomFieldTemplate(props) {
   var id = props.id,
       classNames = props.classNames,
@@ -98,10 +84,6 @@ var CustomFieldTemplate = function CustomFieldTemplate(props) {
   }, label, required ? '*' : null), children, description, errors, help);
 };
 
-var customFields = {
-  DescriptionField: CustomDescription,
-  TitleField: CustomTitle
-};
 var customWidgets = {
   CheckboxWidget: CustomCheckbox
 }; // const log = (type) => console.log.bind(console, type);
@@ -149,7 +131,8 @@ var HelmUI = /*#__PURE__*/function (_Component) {
           config = _this$props.config,
           values = _this$props.values,
           validate = _this$props.validate,
-          validationCallback = _this$props.validationCallback;
+          validationCallback = _this$props.validationCallback,
+          fields = _this$props.fields;
 
       if (!schema || !config) {
         return /*#__PURE__*/_react["default"].createElement("div", {
@@ -245,13 +228,12 @@ var HelmUI = /*#__PURE__*/function (_Component) {
           onChange: function onChange(e) {
             return _this2.setSchemaValues(schema, s.$id, values, e.formData);
           },
-          schema: s // onChange={log("changed")}
-          // onSubmit={log("submitted")}
+          schema: s // onSubmit={log("submitted")}
           // onError={log("errors")}
           ,
           uiSchema: uiSchemaToRender[s.$id],
-          formData: valuesToRender[s.$id] // fields={customFields}
-          ,
+          formData: valuesToRender[s.$id],
+          fields: fields,
           widgets: customWidgets // FieldTemplate={CustomFieldTemplate}
           // className={styles('m-8')}
           ,
