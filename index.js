@@ -41,12 +41,6 @@ function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Re
 
 function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
 
-var CustomText = function CustomText(props) {
-  return /*#__PURE__*/_react["default"].createElement("div", null, /*#__PURE__*/_react["default"].createElement("div", {
-    className: "mt-1 relative rounded-md shadow-sm"
-  }, "myWidget"));
-};
-
 var CustomCheckbox = function CustomCheckbox(props) {
   var value = props.value,
       label = props.label;
@@ -68,25 +62,9 @@ var CustomCheckbox = function CustomCheckbox(props) {
   })));
 };
 
-var CustomFieldTemplate = function CustomFieldTemplate(props) {
-  var id = props.id,
-      classNames = props.classNames,
-      label = props.label,
-      help = props.help,
-      required = props.required,
-      description = props.description,
-      errors = props.errors,
-      children = props.children;
-  return /*#__PURE__*/_react["default"].createElement("div", {
-    className: classNames
-  }, /*#__PURE__*/_react["default"].createElement("label", {
-    htmlFor: id
-  }, label, required ? '*' : null), children, description, errors, help);
-};
-
 var customWidgets = {
   CheckboxWidget: CustomCheckbox
-}; // const log = (type) => console.log.bind(console, type);
+};
 
 var HelmUI = /*#__PURE__*/function (_Component) {
   _inherits(HelmUI, _Component);
@@ -227,15 +205,11 @@ var HelmUI = /*#__PURE__*/function (_Component) {
           onChange: function onChange(e) {
             return _this2.setSchemaValues(schema, s.$id, values, e.formData);
           },
-          schema: s // onSubmit={log("submitted")}
-          // onError={log("errors")}
-          ,
+          schema: s,
           uiSchema: uiSchemaToRender[s.$id],
           formData: valuesToRender[s.$id],
           fields: fields,
-          widgets: customWidgets // FieldTemplate={CustomFieldTemplate}
-          // className={styles('m-8')}
-          ,
+          widgets: customWidgets,
           liveValidate: validate
         });
       }))));

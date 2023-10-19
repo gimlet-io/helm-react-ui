@@ -3,16 +3,6 @@ import Markdown from 'react-markdown'
 import Form from '@rjsf/core'
 import Ajv from "ajv"
 
-const CustomText = (props) => {
-  return (
-    <div>
-      <div className="mt-1 relative rounded-md shadow-sm">
-        myWidget
-      </div>
-    </div>
-  )
-}
-
 const CustomCheckbox = (props) => {
   const {value, label} = props
   const translate = value ? 'translate-x-5' : 'translate-x-0'
@@ -33,24 +23,9 @@ const CustomCheckbox = (props) => {
   )
 }
 
-const CustomFieldTemplate = (props) => {
-  const {id, classNames, label, help, required, description, errors, children} = props
-  return (
-    <div className={classNames}>
-      <label htmlFor={id}>{label}{required ? '*' : null}</label>
-      {children}
-      {description}
-      {errors}
-      {help}
-    </div>
-  )
-}
-
 const customWidgets = {
   CheckboxWidget: CustomCheckbox,
 }
-
-// const log = (type) => console.log.bind(console, type);
 
 export default class HelmUI extends Component {
   constructor(props) {
@@ -179,14 +154,10 @@ export default class HelmUI extends Component {
                       key={s.$id}
                       onChange={e => this.setSchemaValues(schema, s.$id, values, e.formData)}
                       schema={s}
-                      // onSubmit={log("submitted")}
-                      // onError={log("errors")}
                       uiSchema={uiSchemaToRender[s.$id]}
                       formData={valuesToRender[s.$id]}
                       fields={fields}
                       widgets={customWidgets}
-                      // FieldTemplate={CustomFieldTemplate}
-                      // className={styles('m-8')}
                       liveValidate={validate}
                     />
                   )
