@@ -47,10 +47,10 @@ var CustomCheckbox = function CustomCheckbox(props) {
   var translate = value ? 'translate-x-5' : 'translate-x-0';
   var bg = value ? 'bg-indigo-600' : 'bg-gray-200';
   return /*#__PURE__*/_react["default"].createElement("div", null, /*#__PURE__*/_react["default"].createElement("label", {
-    "class": "control-label"
+    className: "control-label"
   }, label), /*#__PURE__*/_react["default"].createElement("span", {
     role: "checkbox",
-    tabindex: "0",
+    tabIndex: "0",
     "aria-checked": value,
     onClick: function onClick(event) {
       return props.onChange(!value);
