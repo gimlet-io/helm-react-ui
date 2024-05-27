@@ -9,9 +9,9 @@ const CustomCheckbox = (props) => {
   const bg = value ? 'bg-indigo-600' : 'bg-gray-200'
   return (
     <div>
-      <label class="control-label">{label}</label>
+      <label className="control-label">{label}</label>
       <span
-        role="checkbox" tabindex="0"
+        role="checkbox" tabIndex="0"
         aria-checked={value}
         onClick={(event) => props.onChange(!value)}
         className={`${bg} mt-1 relative inline-flex flex-shrink-0 h-6 w-11 border-2 border-transparent rounded-full cursor-pointer transition-colors ease-in-out duration-200 focus:outline-none focus:shadow-outline`}>
