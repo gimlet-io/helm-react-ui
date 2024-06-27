@@ -146,25 +146,23 @@ export default class HelmUI extends Component {
         </aside>
         }
         <div className={gridSpan}>
-          <div className="space-y-6 sm:px-6 lg:px-0">
-            {
-              schemasToRender.map(s => {
-                  return (
-                    <Form
-                      key={s.$id}
-                      onChange={e => this.setSchemaValues(schema, s.$id, values, e.formData)}
-                      schema={s}
-                      uiSchema={uiSchemaToRender[s.$id]}
-                      formData={valuesToRender[s.$id]}
-                      fields={fields}
-                      widgets={customWidgets}
-                      liveValidate={validate}
-                    />
-                  )
-                }
-              )
-            }
-          </div>
+          {
+            schemasToRender.map(s => {
+                return (
+                  <Form
+                    key={s.$id}
+                    onChange={e => this.setSchemaValues(schema, s.$id, values, e.formData)}
+                    schema={s}
+                    uiSchema={uiSchemaToRender[s.$id]}
+                    formData={valuesToRender[s.$id]}
+                    fields={fields}
+                    widgets={customWidgets}
+                    liveValidate={validate}
+                  />
+                )
+              }
+            )
+          }
         </div>
       </div>
     )

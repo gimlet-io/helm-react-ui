@@ -197,8 +197,6 @@ var HelmUI = /*#__PURE__*/function (_Component) {
         }, c.metaData.name));
       }))), /*#__PURE__*/_react["default"].createElement("div", {
         className: gridSpan
-      }, /*#__PURE__*/_react["default"].createElement("div", {
-        className: "space-y-6 sm:px-6 lg:px-0"
       }, schemasToRender.map(function (s) {
         return /*#__PURE__*/_react["default"].createElement(_core["default"], {
           key: s.$id,
@@ -212,7 +210,7 @@ var HelmUI = /*#__PURE__*/function (_Component) {
           widgets: customWidgets,
           liveValidate: validate
         });
-      }))));
+      })));
     }
   }]);
 
